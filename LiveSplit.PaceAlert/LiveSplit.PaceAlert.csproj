@@ -53,7 +53,7 @@
           <Private>True</Private>
         </Reference>
         <Reference Include="LiveSplit.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\Owner\Documents\Livesplit\LiveSplit.Core.dll</HintPath>
+          <HintPath>..\..\Livesplit\LiveSplit.Core.dll</HintPath>
         </Reference>
         <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
           <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -91,7 +91,7 @@
         <Reference Include="System.Windows.Forms" />
         <Reference Include="System.Xml" />
         <Reference Include="UpdateManager, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\Owner\Documents\Livesplit\UpdateManager.dll</HintPath>
+          <HintPath>..\..\Livesplit\UpdateManager.dll</HintPath>
         </Reference>
     </ItemGroup>
     <ItemGroup>
@@ -119,13 +119,13 @@
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PostBuildEvent>
-            copy $(TargetPath) C:\Users\Owner\Documents\Livesplit\Components\$(TargetFileName)
+            copy $(TargetPath) $(ProjectDir)\..\..\Livesplit\Components\$(TargetFileName)
         </PostBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PostBuildEvent>
             copy $(TargetPath) $(ProjectDir)Components\$(TargetFileName)
-            copy $(TargetPath) C:\Users\Owner\Documents\Livesplit\Components\$(TargetFileName)
+            copy $(TargetPath) $(ProjectDir)\..\..\Components\$(TargetFileName)
         </PostBuildEvent>
     </PropertyGroup>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

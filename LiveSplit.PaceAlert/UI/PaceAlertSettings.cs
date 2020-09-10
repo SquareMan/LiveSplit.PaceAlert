@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
 using System.Xml;
 
 namespace LiveSplit.PaceAlert.UI
@@ -19,6 +21,13 @@ namespace LiveSplit.PaceAlert.UI
         {
             
         }
-        
+
+        private void btnSetURL_Click(object sender, EventArgs e)
+        {
+            using (var form = new WebhookURLForm())
+            {
+                form.ShowDialog();
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>LiveSplit.PaceAlert</RootNamespace>
         <AssemblyName>LiveSplit.PaceAlert</AssemblyName>
-        <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -95,6 +95,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Discord\PaceBot.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\PaceAlertComponent.cs" />
         <Compile Include="UI\PaceAlertFactory.cs" />
@@ -104,17 +105,23 @@
         <Compile Include="UI\PaceAlertSettings.Designer.cs">
           <DependentUpon>PaceAlertSettings.cs</DependentUpon>
         </Compile>
+        <Compile Include="UI\WebhookURLForm.cs">
+          <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="UI\WebhookURLForm.Designer.cs">
+          <DependentUpon>WebhookURLForm.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="UI\PaceAlertSettings.resx">
         <DependentUpon>PaceAlertSettings.cs</DependentUpon>
       </EmbeddedResource>
+      <EmbeddedResource Include="UI\WebhookURLForm.resx">
+        <DependentUpon>WebhookURLForm.cs</DependentUpon>
+      </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Discord" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

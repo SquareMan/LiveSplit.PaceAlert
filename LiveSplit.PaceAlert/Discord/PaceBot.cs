@@ -15,5 +15,14 @@ namespace LiveSplit.PaceAlert.Discord
             }
             catch {}
         }
+        
+        public static async void SendMessage(string text)
+        {
+            try
+            {
+                await _client.SendMessageAsync(text);
+            }
+            catch {}
+        }
     }
 }

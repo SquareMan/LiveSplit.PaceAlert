@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Xml;
+using LiveSplit.PaceAlert.Discord;
 
 namespace LiveSplit.PaceAlert.UI
 {
@@ -27,6 +28,11 @@ namespace LiveSplit.PaceAlert.UI
             {
                 form.ShowDialog();
             }
+        }
+
+        private void btnSendMessage_Click(object sender, EventArgs e)
+        {
+            PaceBot.SendMessage(txtMessage.Text);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using LiveSplit.PaceAlert.Discord;
 
 namespace LiveSplit.PaceAlert.UI
 {
@@ -23,6 +24,8 @@ namespace LiveSplit.PaceAlert.UI
             {
                 // Do Something
             }
+            
+            PaceBot.SetURL(txtWebhookURL.Text);
             
             DialogResult = DialogResult.OK;
             Close();

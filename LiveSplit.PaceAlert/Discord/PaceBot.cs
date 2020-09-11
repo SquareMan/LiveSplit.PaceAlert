@@ -1,18 +1,19 @@
-﻿using System.Threading.Tasks;
-using Discord.Webhook;
+﻿using Discord.Webhook;
 
 namespace LiveSplit.PaceAlert.Discord
 {
-    public class PaceBot
+    public static class PaceBot
     {
-        private DiscordWebhookClient _client;
+        private static DiscordWebhookClient _client;
         
-        public async Task MainAsync(string webhookURL)
+        public static async void SetURL(string webhookURL)
         {
-            _client = new DiscordWebhookClient(webhookURL);
-            await _client.SendMessageAsync("Hello World! (From LiveSplit)");
-
-            await Task.Delay(-1);
+            try
+            {
+                _client?.Dispose();
+                _client = new DiscordWebhookClient(webhookURL);
+            }
+            catch {}
         }
     }
 }

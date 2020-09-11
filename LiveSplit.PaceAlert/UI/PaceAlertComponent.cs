@@ -1,13 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
 using LiveSplit.UI;
 using LiveSplit.UI.Components;
-using LiveSplitCore;
 
 namespace LiveSplit.PaceAlert.UI
 {
@@ -46,7 +43,7 @@ namespace LiveSplit.PaceAlert.UI
 
             if (webhookURL != null)
             {
-                Task.Factory.StartNew(delegate { new PaceBot().MainAsync(webhookURL).GetAwaiter().GetResult(); }, TaskCreationOptions.LongRunning);
+                PaceBot.SetURL(webhookURL);
             }
         }
 

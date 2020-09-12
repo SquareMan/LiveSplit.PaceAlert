@@ -34,6 +34,7 @@ namespace LiveSplit.PaceAlert.UI
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.txtWebhookURL = new System.Windows.Forms.TextBox();
+            this.lblFail = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -66,11 +67,22 @@ namespace LiveSplit.PaceAlert.UI
             this.txtWebhookURL.TabIndex = 2;
             this.txtWebhookURL.UseSystemPasswordChar = true;
             // 
+            // lblFail
+            // 
+            this.lblFail.ForeColor = System.Drawing.Color.Red;
+            this.lblFail.Location = new System.Drawing.Point(12, 42);
+            this.lblFail.Name = "lblFail";
+            this.lblFail.Size = new System.Drawing.Size(179, 23);
+            this.lblFail.TabIndex = 3;
+            this.lblFail.Text = "Failed to connect to webhook ";
+            this.lblFail.Visible = false;
+            // 
             // WebhookURLForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(375, 77);
+            this.Controls.Add(this.lblFail);
             this.Controls.Add(this.txtWebhookURL);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
@@ -87,6 +99,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Label lblFail;
         private System.Windows.Forms.TextBox txtWebhookURL;
 
         #endregion

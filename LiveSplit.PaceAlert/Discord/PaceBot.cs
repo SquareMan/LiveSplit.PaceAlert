@@ -6,14 +6,19 @@ namespace LiveSplit.PaceAlert.Discord
     {
         private static DiscordWebhookClient _client;
         
-        public static async void SetURL(string webhookURL)
+        public static bool SetURL(string webhookURL)
         {
             try
             {
                 _client?.Dispose();
                 _client = new DiscordWebhookClient(webhookURL);
             }
-            catch {}
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
         
         public static async void SendMessage(string text)

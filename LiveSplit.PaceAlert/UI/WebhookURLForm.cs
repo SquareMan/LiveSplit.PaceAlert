@@ -14,21 +14,26 @@ namespace LiveSplit.PaceAlert.UI
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            // Save URL
-            // TODO: Find better option than plaintext?
-            try
+            if (PaceBot.SetURL(txtWebhookURL.Text))
             {
-                File.WriteAllText("webhookURL",txtWebhookURL.Text);
+                // Save URL
+                // TODO: Find better option than plaintext?
+                try
+                {
+                    File.WriteAllText("webhookURL",txtWebhookURL.Text);
+                }
+                catch (IOException exception)
+                {
+                    // Do Something
+                }
+            
+                DialogResult = DialogResult.OK;
+                Close();                
             }
-            catch (IOException exception)
+            else
             {
-                // Do Something
+                lblFail.Visible = true;
             }
-            
-            PaceBot.SetURL(txtWebhookURL.Text);
-            
-            DialogResult = DialogResult.OK;
-            Close();
         }
         private void btnCancel_Click(object sender, EventArgs e)
         {

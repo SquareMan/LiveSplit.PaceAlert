@@ -96,14 +96,15 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Discord\PaceBot.cs" />
+        <Compile Include="Logic\Settings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\PaceAlertComponent.cs" />
         <Compile Include="UI\PaceAlertFactory.cs" />
-        <Compile Include="UI\PaceAlertSettings.cs">
+        <Compile Include="UI\PaceAlertSettingsControl.cs">
           <SubType>UserControl</SubType>
         </Compile>
-        <Compile Include="UI\PaceAlertSettings.Designer.cs">
-          <DependentUpon>PaceAlertSettings.cs</DependentUpon>
+        <Compile Include="UI\PaceAlertSettingsControl.Designer.cs">
+          <DependentUpon>PaceAlertSettingsControl.cs</DependentUpon>
         </Compile>
         <Compile Include="UI\WebhookURLForm.cs">
           <SubType>Form</SubType>
@@ -113,8 +114,8 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="UI\PaceAlertSettings.resx">
-        <DependentUpon>PaceAlertSettings.cs</DependentUpon>
+      <EmbeddedResource Include="UI\PaceAlertSettingsControl.resx">
+        <DependentUpon>PaceAlertSettingsControl.cs</DependentUpon>
       </EmbeddedResource>
       <EmbeddedResource Include="UI\WebhookURLForm.resx">
         <DependentUpon>WebhookURLForm.cs</DependentUpon>

@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
+using LiveSplit.PaceAlert.Logic;
 using LiveSplit.UI;
 using LiveSplit.UI.Components;
 
@@ -13,12 +15,12 @@ namespace LiveSplit.PaceAlert.UI
         public override string ComponentName => PaceAlertFactory.PaceAlertName;
 
         private LiveSplitState _state;
-        private PaceAlertSettings _settings;
+        private PaceAlertSettingsControl _settingsControlControl;
 
         public PaceAlertComponent(LiveSplitState state)
         {
             _state = state;
-            _settings = new PaceAlertSettings();
+            _settingsControlControl = new PaceAlertSettingsControl(state);
             StartBot();
         }
 
@@ -54,17 +56,17 @@ namespace LiveSplit.PaceAlert.UI
 
         public override Control GetSettingsControl(LayoutMode mode)
         {
-            return _settings;
+            return _settingsControlControl;
         }
 
         public override XmlNode GetSettings(XmlDocument document)
         {
-            return _settings.GetSettings(document);
+            return _settingsControlControl.GetSettings(document);
         }
 
         public override void SetSettings(XmlNode settings)
         {
-            _settings.SetSettings(settings);
+            _settingsControlControl.SetSettings(settings);
         }
     }
 }

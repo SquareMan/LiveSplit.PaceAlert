@@ -36,7 +36,11 @@ namespace LiveSplit.PaceAlert.UI
             SettingsHelper.CreateSetting(document, element, "Version",
                 Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
             
+            // Serialize settings for split conditions
             SettingsHelper.CreateSetting(document, element, "SelectedSplit", Settings.SelectedSplit);
+            SettingsHelper.CreateSetting(document, element, "DeltaTarget", Settings.DeltaTarget);
+            SettingsHelper.CreateSetting(document, element, "Ahead", Settings.Ahead);
+            SettingsHelper.CreateSetting(document, element, "Comparison", Settings.Comparison);
             
             return element;
         }
@@ -44,6 +48,37 @@ namespace LiveSplit.PaceAlert.UI
         public void SetSettings(XmlNode settings)
         {
             cboSelectedSplit.SelectedIndex = SettingsHelper.ParseInt(settings["SelectedSplit"], -1);
+
+            Settings.DeltaTarget = SettingsHelper.ParseTimeSpan(settings["DeltaTarget"], TimeSpan.Zero);
+            
+            // Set individual time text boxes, using TotalHours to account for TimeSpans with 24 or more hours
+            txtDeltaHour.Text = ((int)Settings.DeltaTarget.TotalHours).ToString("D2");
+            txtDeltaMinute.Text = Settings.DeltaTarget.Minutes.ToString("D2");
+            txtDeltaSecond.Text = Settings.DeltaTarget.Seconds.ToString("D2");
+            txtDeltaMillisecond.Text = Settings.DeltaTarget.Milliseconds.ToString("D3");
+
+            // Parse Settings for Ahead/Behind radio buttons
+            var ahead = SettingsHelper.ParseBool(settings["Ahead"], true);
+            if (ahead)
+            {
+                rdoAhead.Checked = true;
+            }
+            else
+            {
+                rdoBehind.Checked = true;
+            }
+            
+            // Parse Settings for Timing Method Comparison
+            var comparison = SettingsHelper.ParseEnum(settings["Comparison"], TimingMethod.RealTime);
+            switch (comparison)
+            {
+                case TimingMethod.RealTime:
+                    rdoRealTime.Checked = true;
+                    break;
+                case TimingMethod.GameTime:
+                    rdoGameTime.Checked = true;
+                    break;
+            }
         }
 
         private void BuildSplitNames()
@@ -121,6 +156,98 @@ namespace LiveSplit.PaceAlert.UI
         private void cboSelectedSplit_SelectedIndexChanged(object sender, EventArgs e)
         {
             Settings.SelectedSplit = cboSelectedSplit.SelectedIndex;
+        }
+
+        private void txtDeltaHour_Validating(object sender, CancelEventArgs e)
+        {
+            if (int.TryParse(txtDeltaHour.Text, out var newTime) && newTime >= 0)
+            {
+                txtDeltaHour.Text = newTime.ToString("D2");
+
+                var oldTime = Settings.DeltaTarget;
+                Settings.DeltaTarget = new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
+            }
+            else
+            {
+                txtDeltaHour.Text = ((int)Settings.DeltaTarget.TotalHours).ToString("D2");
+            }
+        }
+
+        private void txtDeltaMinute_Validating(object sender, CancelEventArgs e)
+        {
+            if (int.TryParse(txtDeltaMinute.Text, out var newTime) && newTime >= 0 && newTime < 60)
+            {
+                txtDeltaMinute.Text = newTime.ToString("D2");
+
+                var oldTime = Settings.DeltaTarget;
+                Settings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds, oldTime.Milliseconds);
+            }
+            else
+            {
+                txtDeltaMinute.Text = Settings.DeltaTarget.Minutes.ToString("D2");
+            }
+        }
+
+        private void txtDeltaSecond_Validating(object sender, CancelEventArgs e)
+        {
+            if (int.TryParse(txtDeltaSecond.Text, out var newTime) && newTime >= 0 && newTime < 60)
+            {
+                txtDeltaSecond.Text = newTime.ToString("D2");
+
+                var oldTime = Settings.DeltaTarget;
+                Settings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime, oldTime.Milliseconds);
+            }
+            else
+            {
+                txtDeltaSecond.Text = Settings.DeltaTarget.Seconds.ToString("D2");
+            }
+        }
+
+        private void txtDeltaMillisecond_Validating(object sender, CancelEventArgs e)
+        {
+            if (int.TryParse(txtDeltaMillisecond.Text, out var newTime) && newTime >= 0 && newTime < 1000)
+            {
+                txtDeltaMillisecond.Text = newTime.ToString("D3");
+
+                var oldTime = Settings.DeltaTarget;
+                Settings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
+            }
+            else
+            {
+                txtDeltaMillisecond.Text = Settings.DeltaTarget.Milliseconds.ToString("D3");
+            }
+        }
+
+        private void rdoAhead_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoAhead.Checked)
+            {
+                Settings.Ahead = true;
+            }
+        }
+
+        private void rdoBehind_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoBehind.Checked)
+            {
+                Settings.Ahead = false;
+            }
+        }
+
+        private void rdoRealTime_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoRealTime.Checked)
+            {
+                Settings.Comparison = TimingMethod.RealTime;
+            }
+        }
+
+        private void rdoGameTime_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoGameTime.Checked)
+            {
+                Settings.Comparison = TimingMethod.GameTime;
+            }
         }
     }
 }

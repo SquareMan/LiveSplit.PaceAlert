@@ -14,7 +14,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (PaceBot.SetURL(txtWebhookURL.Text))
+            if (PaceBot.Connect(txtWebhookURL.Text))
             {
                 // Save URL
                 // TODO: Find better option than plaintext?

@@ -4,21 +4,24 @@ namespace LiveSplit.PaceAlert.Discord
 {
     public static class PaceBot
     {
+        public static bool IsConnected { get; private set; }
+        
         private static DiscordWebhookClient _client;
         
-        public static bool SetURL(string webhookURL)
+        public static bool Connect(string webhookURL)
         {
             try
             {
                 _client?.Dispose();
                 _client = new DiscordWebhookClient(webhookURL);
+                IsConnected = true;
             }
             catch
             {
-                return false;
+                IsConnected = false;
             }
 
-            return true;
+            return IsConnected;
         }
         
         public static async void SendMessage(string text)

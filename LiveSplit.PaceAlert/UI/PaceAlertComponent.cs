@@ -45,7 +45,7 @@ namespace LiveSplit.PaceAlert.UI
 
             if (webhookURL != null)
             {
-                PaceBot.SetURL(webhookURL);
+                PaceBot.Connect(webhookURL);
             }
         }
 

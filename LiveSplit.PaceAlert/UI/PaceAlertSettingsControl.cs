@@ -59,14 +59,7 @@ namespace LiveSplit.PaceAlert.UI
 
             // Parse Settings for Ahead/Behind radio buttons
             var ahead = SettingsHelper.ParseBool(settings["Ahead"], true);
-            if (ahead)
-            {
-                rdoAhead.Checked = true;
-            }
-            else
-            {
-                rdoBehind.Checked = true;
-            }
+            cboAheadBehind.SelectedIndex = ahead ? 0 : 1;
             
             // Parse Settings for Timing Method Comparison
             var comparison = SettingsHelper.ParseEnum(settings["Comparison"], TimingMethod.RealTime);
@@ -218,22 +211,6 @@ namespace LiveSplit.PaceAlert.UI
             }
         }
 
-        private void rdoAhead_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoAhead.Checked)
-            {
-                Settings.Ahead = true;
-            }
-        }
-
-        private void rdoBehind_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoBehind.Checked)
-            {
-                Settings.Ahead = false;
-            }
-        }
-
         private void rdoRealTime_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoRealTime.Checked)
@@ -248,6 +225,11 @@ namespace LiveSplit.PaceAlert.UI
             {
                 Settings.Comparison = TimingMethod.GameTime;
             }
+        }
+
+        private void cboAheadBehind_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.Ahead = cboAheadBehind.SelectedIndex == 0;
         }
     }
 }

@@ -74,8 +74,9 @@ namespace LiveSplit.PaceAlert.UI
                 if (delta.HasValue)
                 {
                     var deltaValue = delta.Value;
+                    var deltaTarget = Settings.Ahead ? Settings.DeltaTarget.Negate() : Settings.DeltaTarget;
                     
-                    if ((Settings.Ahead && deltaValue.TotalSeconds < Settings.DeltaTarget.TotalSeconds) || (!Settings.Ahead && deltaValue.TotalSeconds > Settings.DeltaTarget.TotalSeconds))
+                    if (deltaValue.TotalSeconds < deltaTarget.TotalSeconds)
                     {
                         string time = ToDeltaFormat(deltaValue);
                         char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';

@@ -9,5 +9,6 @@ namespace LiveSplit.PaceAlert.Logic
         public static TimeSpan DeltaTarget = TimeSpan.Zero;
         public static bool Ahead = true;
         public static TimingMethod Comparison = TimingMethod.RealTime;
+        public static string MessageTemplate = string.Empty;
     }
 }

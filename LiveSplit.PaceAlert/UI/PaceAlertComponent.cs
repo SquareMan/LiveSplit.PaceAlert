@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
@@ -78,10 +79,35 @@ namespace LiveSplit.PaceAlert.UI
                     
                     if (deltaValue.TotalSeconds < deltaTarget.TotalSeconds)
                     {
-                        string time = ToDeltaFormat(deltaValue);
-                        char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
-                        PaceBot.SendMessage($"@everyone <@!200342701147684864> is on {negative}{time} pace after {split.Name}\nWatch at https://twitch.tv/thecoolsquare");
-                        
+                        StringBuilder messageStringBuilder = new StringBuilder();
+                        string[] substrings = Settings.MessageTemplate.Split('$');
+                        foreach (var substring in substrings)
+                        {
+                            //Parse message variables
+                            if (substring.StartsWith("delta"))
+                            {
+                                string time = ToDeltaFormat(deltaValue);
+                                char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
+                                messageStringBuilder.Append(negative + time);
+                                messageStringBuilder.Append(substring.Substring("delta".Length));
+                            }
+                            else if (substring.StartsWith("split"))
+                            {
+                                messageStringBuilder.Append(split.Name);
+                                messageStringBuilder.Append(substring.Substring("split".Length));
+                            }
+                            else
+                            {
+                                messageStringBuilder.Append(substring);
+                            }
+                        }
+
+                        var messageString = messageStringBuilder.ToString();
+                        if (messageString != string.Empty)
+                        {
+                            PaceBot.SendMessage(messageString);
+                        }
+
                         notified = true;
                     }
                 }

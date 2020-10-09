@@ -42,6 +42,9 @@ namespace LiveSplit.PaceAlert.UI
             SettingsHelper.CreateSetting(document, element, "Ahead", Settings.Ahead);
             SettingsHelper.CreateSetting(document, element, "Comparison", Settings.Comparison);
             
+            // Serialize settings for notification message
+            SettingsHelper.CreateSetting(document, element, "MessageTemplate", Settings.MessageTemplate);
+            
             return element;
         }
 
@@ -72,6 +75,10 @@ namespace LiveSplit.PaceAlert.UI
                     rdoGameTime.Checked = true;
                     break;
             }
+            
+            // Parse settings for notification message
+            txtMessage.Text = SettingsHelper.ParseString(settings["MessageTemplate"], string.Empty);
+            Settings.MessageTemplate = txtMessage.Text;
         }
 
         private void BuildSplitNames()
@@ -230,6 +237,11 @@ namespace LiveSplit.PaceAlert.UI
         private void cboAheadBehind_SelectedIndexChanged(object sender, EventArgs e)
         {
             Settings.Ahead = cboAheadBehind.SelectedIndex == 0;
+        }
+
+        private void txtMessage_Validated(object sender, EventArgs e)
+        {
+            Settings.MessageTemplate = txtMessage.Text;
         }
     }
 }

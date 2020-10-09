@@ -243,5 +243,10 @@ namespace LiveSplit.PaceAlert.UI
         {
             Settings.MessageTemplate = txtMessage.Text;
         }
+
+        private void btnVariables_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(Strings.NotificationMessageVariablesDescription, "Message Variables");
+        }
     }
 }

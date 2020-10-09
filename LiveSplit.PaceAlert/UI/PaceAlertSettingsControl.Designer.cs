@@ -43,22 +43,23 @@ namespace LiveSplit.PaceAlert.UI
             this.lblDeltaMinute = new System.Windows.Forms.Label();
             this.lblDeltaSecond = new System.Windows.Forms.Label();
             this.lblDeltaMillisecond = new System.Windows.Forms.Label();
-            this.grpSplitCondition = new System.Windows.Forms.GroupBox();
+            this.grpNotificationCondition = new System.Windows.Forms.GroupBox();
             this.cboAheadBehind = new System.Windows.Forms.ComboBox();
             this.pnlComparison = new System.Windows.Forms.Panel();
             this.rdoRealTime = new System.Windows.Forms.RadioButton();
             this.rdoGameTime = new System.Windows.Forms.RadioButton();
-            this.grpSplitCondition.SuspendLayout();
+            this.btnVariables = new System.Windows.Forms.Button();
+            this.grpNotificationCondition.SuspendLayout();
             this.pnlComparison.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSetURL
             // 
             this.btnSetURL.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetURL.Location = new System.Drawing.Point(294, 10);
+            this.btnSetURL.Location = new System.Drawing.Point(304, 10);
             this.btnSetURL.Margin = new System.Windows.Forms.Padding(3, 10, 10, 3);
             this.btnSetURL.Name = "btnSetURL";
-            this.btnSetURL.Size = new System.Drawing.Size(146, 26);
+            this.btnSetURL.Size = new System.Drawing.Size(136, 26);
             this.btnSetURL.TabIndex = 0;
             this.btnSetURL.Text = "Set Webhook URL";
             this.btnSetURL.UseVisualStyleBackColor = true;
@@ -182,27 +183,27 @@ namespace LiveSplit.PaceAlert.UI
             this.lblDeltaMillisecond.Text = "ms";
             this.lblDeltaMillisecond.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // grpSplitCondition
+            // grpNotificationCondition
             // 
-            this.grpSplitCondition.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpSplitCondition.Controls.Add(this.cboAheadBehind);
-            this.grpSplitCondition.Controls.Add(this.cboSelectedSplit);
-            this.grpSplitCondition.Controls.Add(this.pnlComparison);
-            this.grpSplitCondition.Controls.Add(this.txtDeltaHour);
-            this.grpSplitCondition.Controls.Add(this.txtDeltaMinute);
-            this.grpSplitCondition.Controls.Add(this.lblDeltaMillisecond);
-            this.grpSplitCondition.Controls.Add(this.txtDeltaSecond);
-            this.grpSplitCondition.Controls.Add(this.lblDeltaSecond);
-            this.grpSplitCondition.Controls.Add(this.txtDeltaMillisecond);
-            this.grpSplitCondition.Controls.Add(this.lblDeltaMinute);
-            this.grpSplitCondition.Controls.Add(this.lblDeltaHour);
-            this.grpSplitCondition.Location = new System.Drawing.Point(10, 40);
-            this.grpSplitCondition.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
-            this.grpSplitCondition.Name = "grpSplitCondition";
-            this.grpSplitCondition.Size = new System.Drawing.Size(430, 72);
-            this.grpSplitCondition.TabIndex = 115;
-            this.grpSplitCondition.TabStop = false;
-            this.grpSplitCondition.Text = "Split Condition";
+            this.grpNotificationCondition.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpNotificationCondition.Controls.Add(this.cboAheadBehind);
+            this.grpNotificationCondition.Controls.Add(this.cboSelectedSplit);
+            this.grpNotificationCondition.Controls.Add(this.pnlComparison);
+            this.grpNotificationCondition.Controls.Add(this.txtDeltaHour);
+            this.grpNotificationCondition.Controls.Add(this.txtDeltaMinute);
+            this.grpNotificationCondition.Controls.Add(this.lblDeltaMillisecond);
+            this.grpNotificationCondition.Controls.Add(this.txtDeltaSecond);
+            this.grpNotificationCondition.Controls.Add(this.lblDeltaSecond);
+            this.grpNotificationCondition.Controls.Add(this.txtDeltaMillisecond);
+            this.grpNotificationCondition.Controls.Add(this.lblDeltaMinute);
+            this.grpNotificationCondition.Controls.Add(this.lblDeltaHour);
+            this.grpNotificationCondition.Location = new System.Drawing.Point(10, 40);
+            this.grpNotificationCondition.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
+            this.grpNotificationCondition.Name = "grpNotificationCondition";
+            this.grpNotificationCondition.Size = new System.Drawing.Size(430, 72);
+            this.grpNotificationCondition.TabIndex = 115;
+            this.grpNotificationCondition.TabStop = false;
+            this.grpNotificationCondition.Text = "Notification Condition";
             // 
             // cboAheadBehind
             // 
@@ -251,12 +252,25 @@ namespace LiveSplit.PaceAlert.UI
             this.rdoGameTime.UseVisualStyleBackColor = true;
             this.rdoGameTime.CheckedChanged += new System.EventHandler(this.rdoGameTime_CheckedChanged);
             // 
+            // btnVariables
+            // 
+            this.btnVariables.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnVariables.Location = new System.Drawing.Point(225, 365);
+            this.btnVariables.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
+            this.btnVariables.Name = "btnVariables";
+            this.btnVariables.Size = new System.Drawing.Size(63, 26);
+            this.btnVariables.TabIndex = 116;
+            this.btnVariables.Text = "Variables";
+            this.btnVariables.UseVisualStyleBackColor = true;
+            this.btnVariables.Click += new System.EventHandler(this.btnVariables_Click);
+            // 
             // PaceAlertSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.grpSplitCondition);
+            this.Controls.Add(this.btnVariables);
+            this.Controls.Add(this.grpNotificationCondition);
             this.Controls.Add(this.btnSendMessage);
             this.Controls.Add(this.txtMessage);
             this.Controls.Add(this.btnSetURL);
@@ -264,8 +278,8 @@ namespace LiveSplit.PaceAlert.UI
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "PaceAlertSettingsControl";
             this.Size = new System.Drawing.Size(450, 401);
-            this.grpSplitCondition.ResumeLayout(false);
-            this.grpSplitCondition.PerformLayout();
+            this.grpNotificationCondition.ResumeLayout(false);
+            this.grpNotificationCondition.PerformLayout();
             this.pnlComparison.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -273,9 +287,10 @@ namespace LiveSplit.PaceAlert.UI
 
         private System.Windows.Forms.Button btnSendMessage;
         private System.Windows.Forms.Button btnSetURL;
+        private System.Windows.Forms.Button btnVariables;
         private System.Windows.Forms.ComboBox cboAheadBehind;
         private System.Windows.Forms.ComboBox cboSelectedSplit;
-        private System.Windows.Forms.GroupBox grpSplitCondition;
+        private System.Windows.Forms.GroupBox grpNotificationCondition;
         private System.Windows.Forms.Label lblDeltaHour;
         private System.Windows.Forms.Label lblDeltaMillisecond;
         private System.Windows.Forms.Label lblDeltaMinute;

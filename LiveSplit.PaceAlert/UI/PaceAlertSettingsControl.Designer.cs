@@ -288,7 +288,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             this.cboAheadBehind.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cboAheadBehind.FormattingEnabled = true;
-            this.cboAheadBehind.Items.AddRange(new object[] {"-", "+", "-", "+"});
+            this.cboAheadBehind.Items.AddRange(new object[] {"-", "+"});
             this.cboAheadBehind.Location = new System.Drawing.Point(229, 19);
             this.cboAheadBehind.Name = "cboAheadBehind";
             this.cboAheadBehind.Size = new System.Drawing.Size(32, 21);

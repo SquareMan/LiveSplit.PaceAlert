@@ -43,7 +43,7 @@ namespace LiveSplit.PaceAlert.UI
             this.btnCancel.Location = new System.Drawing.Point(283, 42);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 23);
-            this.btnCancel.TabIndex = 0;
+            this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -65,7 +65,7 @@ namespace LiveSplit.PaceAlert.UI
             this.txtWebhookURL.Location = new System.Drawing.Point(12, 12);
             this.txtWebhookURL.Name = "txtWebhookURL";
             this.txtWebhookURL.Size = new System.Drawing.Size(351, 20);
-            this.txtWebhookURL.TabIndex = 2;
+            this.txtWebhookURL.TabIndex = 0;
             this.txtWebhookURL.UseSystemPasswordChar = true;
             // 
             // lblFail

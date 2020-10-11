@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -81,6 +82,20 @@ namespace LiveSplit.PaceAlert.UI
             Settings.MessageTemplate = txtMessage.Text;
         }
 
+        private void UpdatePaceBotStatus()
+        {
+            if (PaceBot.IsConnected)
+            {
+                lblWebhookStatus.Text = $"Webhook Status: Connected to {PaceBot.Name}";
+                lblWebhookStatus.ForeColor = SystemColors.ControlText;
+            }
+            else
+            {
+                lblWebhookStatus.Text = "Webhook Status: Not Connected";
+                lblWebhookStatus.ForeColor = Color.Red;
+            }
+        }
+
         private void BuildSplitNames()
         {
             splitNames = new BindingList<string>();
@@ -140,12 +155,23 @@ namespace LiveSplit.PaceAlert.UI
             }
         }
 
+        private void PaceAlertSettingsControl_Load(object sender, EventArgs e)
+        {
+            UpdatePaceBotStatus();
+        }
+
         private void btnSetURL_Click(object sender, EventArgs e)
         {
             using (var form = new WebhookURLForm())
             {
                 form.ShowDialog();
             }
+            UpdatePaceBotStatus();
+        }
+
+        private void btnVariables_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(Strings.NotificationMessageVariablesDescription, "Message Variables");
         }
 
         private void btnSendMessage_Click(object sender, EventArgs e)
@@ -242,11 +268,6 @@ namespace LiveSplit.PaceAlert.UI
         private void txtMessage_Validated(object sender, EventArgs e)
         {
             Settings.MessageTemplate = txtMessage.Text;
-        }
-
-        private void btnVariables_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(Strings.NotificationMessageVariablesDescription, "Message Variables");
         }
     }
 }

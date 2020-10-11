@@ -51,6 +51,7 @@ namespace LiveSplit.PaceAlert.UI
             this.rdoRealTime = new System.Windows.Forms.RadioButton();
             this.rdoGameTime = new System.Windows.Forms.RadioButton();
             this.cboAheadBehind = new System.Windows.Forms.ComboBox();
+            this.lblWebhookStatus = new System.Windows.Forms.Label();
             this.grpNotificationCondition.SuspendLayout();
             this.grpMessage.SuspendLayout();
             this.grpCondition.SuspendLayout();
@@ -294,17 +295,28 @@ namespace LiveSplit.PaceAlert.UI
             this.cboAheadBehind.TabIndex = 115;
             this.cboAheadBehind.SelectedIndexChanged += new System.EventHandler(this.cboAheadBehind_SelectedIndexChanged);
             // 
+            // lblWebhookStatus
+            // 
+            this.lblWebhookStatus.Location = new System.Drawing.Point(10, 10);
+            this.lblWebhookStatus.Name = "lblWebhookStatus";
+            this.lblWebhookStatus.Size = new System.Drawing.Size(290, 25);
+            this.lblWebhookStatus.TabIndex = 116;
+            this.lblWebhookStatus.Text = "Webhook Status: Not Connected";
+            this.lblWebhookStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // PaceAlertSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.lblWebhookStatus);
             this.Controls.Add(this.grpNotificationCondition);
             this.Controls.Add(this.btnSetURL);
             this.Location = new System.Drawing.Point(15, 15);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "PaceAlertSettingsControl";
             this.Size = new System.Drawing.Size(450, 401);
+            this.Load += new System.EventHandler(this.PaceAlertSettingsControl_Load);
             this.grpNotificationCondition.ResumeLayout(false);
             this.grpMessage.ResumeLayout(false);
             this.grpMessage.PerformLayout();
@@ -326,6 +338,7 @@ namespace LiveSplit.PaceAlert.UI
         private System.Windows.Forms.Label lblDeltaMillisecond;
         private System.Windows.Forms.Label lblDeltaMinute;
         private System.Windows.Forms.Label lblDeltaSecond;
+        private System.Windows.Forms.Label lblWebhookStatus;
         private System.Windows.Forms.Panel pnlComparison;
         private System.Windows.Forms.RadioButton rdoGameTime;
         private System.Windows.Forms.RadioButton rdoRealTime;

@@ -81,7 +81,6 @@ namespace LiveSplit.PaceAlert.UI
             this.txtMessage.Size = new System.Drawing.Size(406, 131);
             this.txtMessage.TabIndex = 100;
             this.txtMessage.WordWrap = false;
-            this.txtMessage.Validated += new System.EventHandler(this.txtMessage_Validated);
             // 
             // btnSendMessage
             // 
@@ -104,7 +103,6 @@ namespace LiveSplit.PaceAlert.UI
             this.cboSelectedSplit.Name = "cboSelectedSplit";
             this.cboSelectedSplit.Size = new System.Drawing.Size(217, 21);
             this.cboSelectedSplit.TabIndex = 2;
-            this.cboSelectedSplit.SelectedIndexChanged += new System.EventHandler(this.cboSelectedSplit_SelectedIndexChanged);
             // 
             // txtDeltaHour
             // 
@@ -271,7 +269,6 @@ namespace LiveSplit.PaceAlert.UI
             this.rdoRealTime.TabStop = true;
             this.rdoRealTime.Text = "Real Time";
             this.rdoRealTime.UseVisualStyleBackColor = true;
-            this.rdoRealTime.CheckedChanged += new System.EventHandler(this.rdoRealTime_CheckedChanged);
             // 
             // rdoGameTime
             // 
@@ -282,7 +279,6 @@ namespace LiveSplit.PaceAlert.UI
             this.rdoGameTime.TabIndex = 112;
             this.rdoGameTime.Text = "Game Time";
             this.rdoGameTime.UseVisualStyleBackColor = true;
-            this.rdoGameTime.CheckedChanged += new System.EventHandler(this.rdoGameTime_CheckedChanged);
             // 
             // cboAheadBehind
             // 
@@ -293,7 +289,6 @@ namespace LiveSplit.PaceAlert.UI
             this.cboAheadBehind.Name = "cboAheadBehind";
             this.cboAheadBehind.Size = new System.Drawing.Size(32, 21);
             this.cboAheadBehind.TabIndex = 115;
-            this.cboAheadBehind.SelectedIndexChanged += new System.EventHandler(this.cboAheadBehind_SelectedIndexChanged);
             // 
             // lblWebhookStatus
             // 

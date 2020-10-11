@@ -67,20 +67,22 @@ namespace LiveSplit.PaceAlert.UI
 
         private void PaceAlert_OnSplit(object sender, EventArgs e)
         {
-            if (!notified && _state.CurrentSplitIndex == Settings.SelectedSplit + 1)
+            var activeSettings = Settings.GetActiveSettings(_state);
+            
+            if (!notified && _state.CurrentSplitIndex == activeSettings.SelectedSplit + 1)
             {
-                var split = _state.Run[Settings.SelectedSplit];
-                var delta = (split.SplitTime - split.PersonalBestSplitTime)[Settings.Comparison];
+                var split = _state.Run[activeSettings.SelectedSplit];
+                var delta = (split.SplitTime - split.PersonalBestSplitTime)[activeSettings.Comparison];
 
                 if (delta.HasValue)
                 {
                     var deltaValue = delta.Value;
-                    var deltaTarget = Settings.Ahead ? Settings.DeltaTarget.Negate() : Settings.DeltaTarget;
+                    var deltaTarget = activeSettings.Ahead ? activeSettings.DeltaTarget.Negate() : activeSettings.DeltaTarget;
                     
                     if (deltaValue.TotalSeconds < deltaTarget.TotalSeconds)
                     {
                         StringBuilder messageStringBuilder = new StringBuilder();
-                        string[] substrings = Settings.MessageTemplate.Split('$');
+                        string[] substrings = activeSettings.MessageTemplate.Split('$');
                         foreach (var substring in substrings)
                         {
                             //Parse message variables

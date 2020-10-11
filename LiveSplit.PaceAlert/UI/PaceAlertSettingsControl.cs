@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
+using LiveSplit.PaceAlert.Logic;
 using LiveSplit.UI;
 using Settings = LiveSplit.PaceAlert.Logic.Settings;
 
@@ -15,59 +16,101 @@ namespace LiveSplit.PaceAlert.UI
     public partial class PaceAlertSettingsControl : UserControl
     {
         private LiveSplitState _state;
+        private NotificationSettings _activeSettings;
         private BindingList<string> splitNames;
         
         public PaceAlertSettingsControl(LiveSplitState state)
         {
-            InitializeComponent();
-
             _state = state;
             Dock = DockStyle.Fill;
             
-            
+            InitializeComponent();
             BuildSplitNames();
             state.RunManuallyModified += splitNames_RunManuallyModified;
-            
         }
 
         public XmlNode GetSettings(XmlDocument document)
         {
-            var element = document.CreateElement("Settings");
-
-            SettingsHelper.CreateSetting(document, element, "Version",
+            _activeSettings.SelectedSplit = cboSelectedSplit.SelectedIndex;
+            _activeSettings.Ahead = cboSelectedSplit.SelectedIndex == 0;
+            _activeSettings.Comparison = rdoRealTime.Checked ? TimingMethod.RealTime : TimingMethod.GameTime;
+            _activeSettings.MessageTemplate = txtMessage.Text;
+            
+            var settingsElement = document.CreateElement("Settings");
+            SettingsHelper.CreateSetting(document, settingsElement, "Version",
                 Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+
+            var splitsElement = document.CreateElement("RunFiles");
+            settingsElement.AppendChild(splitsElement);
             
-            // Serialize settings for split conditions
-            SettingsHelper.CreateSetting(document, element, "SelectedSplit", Settings.SelectedSplit);
-            SettingsHelper.CreateSetting(document, element, "DeltaTarget", Settings.DeltaTarget);
-            SettingsHelper.CreateSetting(document, element, "Ahead", Settings.Ahead);
-            SettingsHelper.CreateSetting(document, element, "Comparison", Settings.Comparison);
+            foreach (var runSettingsKvp in Settings.SettingsDictionary)
+            {
+                var runElement = document.CreateElement("Run");
+                splitsElement.AppendChild(runElement);
+                
+                // Serialize settings for notification
+                var runSettings = runSettingsKvp.Value;
+                SettingsHelper.CreateSetting(document, runElement, "FilePath", runSettingsKvp.Key);
+                SettingsHelper.CreateSetting(document, runElement, "SelectedSplit", runSettings.SelectedSplit);
+                SettingsHelper.CreateSetting(document, runElement, "DeltaTarget", runSettings.DeltaTarget);
+                SettingsHelper.CreateSetting(document, runElement, "Ahead", runSettings.Ahead);
+                SettingsHelper.CreateSetting(document, runElement, "Comparison", runSettings.Comparison);
+                SettingsHelper.CreateSetting(document, runElement, "MessageTemplate", runSettings.MessageTemplate);
+            }
             
-            // Serialize settings for notification message
-            SettingsHelper.CreateSetting(document, element, "MessageTemplate", Settings.MessageTemplate);
-            
-            return element;
+            return settingsElement;
         }
 
         public void SetSettings(XmlNode settings)
         {
-            cboSelectedSplit.SelectedIndex = SettingsHelper.ParseInt(settings["SelectedSplit"], -1);
+            Settings.SettingsDictionary = new Dictionary<string, NotificationSettings>();
 
-            Settings.DeltaTarget = SettingsHelper.ParseTimeSpan(settings["DeltaTarget"], TimeSpan.Zero);
-            
+            var runFileList = settings.SelectNodes(".//RunFiles/Run");
+            if (runFileList != null)
+            {
+                foreach (XmlNode runNode in runFileList)
+                {
+                    string filePath = SettingsHelper.ParseString(runNode["FilePath"]);
+                    if (filePath == null) continue;
+                    
+                    var notificationSettings = new NotificationSettings
+                    {
+                        SelectedSplit = SettingsHelper.ParseInt(runNode["SelectedSplit"], -1),
+                        DeltaTarget = SettingsHelper.ParseTimeSpan(runNode["DeltaTarget"], TimeSpan.Zero),
+                        Ahead = SettingsHelper.ParseBool(runNode["Ahead"], true),
+                        Comparison = SettingsHelper.ParseEnum(runNode["Comparison"], TimingMethod.RealTime),
+                        MessageTemplate = SettingsHelper.ParseString(runNode["MessageTemplate"], string.Empty)
+                    };
+                    
+                    Settings.SettingsDictionary.Add(filePath, notificationSettings);
+                }    
+            }
+
+            SetActiveSettings();
+        }
+
+        private void SetActiveSettings()
+        {
+            //Set form settings to settings associated with currently opened splits file.
+            _activeSettings = Settings.GetActiveSettings(_state);
+            if (_activeSettings == null)
+            {
+                _activeSettings = new NotificationSettings();
+                Settings.SettingsDictionary.Add(_state.Run.FilePath, _activeSettings);
+            }
+
+            cboSelectedSplit.SelectedIndex = _activeSettings.SelectedSplit;
+            cboAheadBehind.SelectedIndex = _activeSettings.Ahead ? 0 : 1;
+            txtMessage.Text = _activeSettings.MessageTemplate;
+        
             // Set individual time text boxes, using TotalHours to account for TimeSpans with 24 or more hours
-            txtDeltaHour.Text = ((int)Settings.DeltaTarget.TotalHours).ToString("D2");
-            txtDeltaMinute.Text = Settings.DeltaTarget.Minutes.ToString("D2");
-            txtDeltaSecond.Text = Settings.DeltaTarget.Seconds.ToString("D2");
-            txtDeltaMillisecond.Text = Settings.DeltaTarget.Milliseconds.ToString("D3");
+            txtDeltaHour.Text = ((int)_activeSettings.DeltaTarget.TotalHours).ToString("D2");
+            txtDeltaMinute.Text = _activeSettings.DeltaTarget.Minutes.ToString("D2");
+            txtDeltaSecond.Text = _activeSettings.DeltaTarget.Seconds.ToString("D2");
+            txtDeltaMillisecond.Text = _activeSettings.DeltaTarget.Milliseconds.ToString("D3");
 
-            // Parse Settings for Ahead/Behind radio buttons
-            var ahead = SettingsHelper.ParseBool(settings["Ahead"], true);
-            cboAheadBehind.SelectedIndex = ahead ? 0 : 1;
-            
             // Parse Settings for Timing Method Comparison
-            var comparison = SettingsHelper.ParseEnum(settings["Comparison"], TimingMethod.RealTime);
-            switch (comparison)
+            switch (_activeSettings.Comparison)
             {
                 case TimingMethod.RealTime:
                     rdoRealTime.Checked = true;
@@ -76,12 +119,8 @@ namespace LiveSplit.PaceAlert.UI
                     rdoGameTime.Checked = true;
                     break;
             }
-            
-            // Parse settings for notification message
-            txtMessage.Text = SettingsHelper.ParseString(settings["MessageTemplate"], string.Empty);
-            Settings.MessageTemplate = txtMessage.Text;
         }
-
+        
         private void UpdatePaceBotStatus()
         {
             if (PaceBot.IsConnected)
@@ -153,6 +192,13 @@ namespace LiveSplit.PaceAlert.UI
                 //Split was removed from end
                 splitNames.RemoveAt(splitNames.Count - 1);
             }
+
+            // Determine if a new splits file has been loaded
+            var newActiveSettings = Settings.GetActiveSettings(_state);
+            if (newActiveSettings != _activeSettings)
+            {
+                SetActiveSettings();
+            }
         }
 
         private void PaceAlertSettingsControl_Load(object sender, EventArgs e)
@@ -179,23 +225,18 @@ namespace LiveSplit.PaceAlert.UI
             PaceBot.SendMessage(txtMessage.Text);
         }
 
-        private void cboSelectedSplit_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Settings.SelectedSplit = cboSelectedSplit.SelectedIndex;
-        }
-
         private void txtDeltaHour_Validating(object sender, CancelEventArgs e)
         {
             if (int.TryParse(txtDeltaHour.Text, out var newTime) && newTime >= 0)
             {
                 txtDeltaHour.Text = newTime.ToString("D2");
 
-                var oldTime = Settings.DeltaTarget;
-                Settings.DeltaTarget = new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
+                var oldTime = _activeSettings.DeltaTarget;
+                _activeSettings.DeltaTarget = new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
             }
             else
             {
-                txtDeltaHour.Text = ((int)Settings.DeltaTarget.TotalHours).ToString("D2");
+                txtDeltaHour.Text = ((int)_activeSettings.DeltaTarget.TotalHours).ToString("D2");
             }
         }
 
@@ -205,12 +246,12 @@ namespace LiveSplit.PaceAlert.UI
             {
                 txtDeltaMinute.Text = newTime.ToString("D2");
 
-                var oldTime = Settings.DeltaTarget;
-                Settings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds, oldTime.Milliseconds);
+                var oldTime = _activeSettings.DeltaTarget;
+                _activeSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds, oldTime.Milliseconds);
             }
             else
             {
-                txtDeltaMinute.Text = Settings.DeltaTarget.Minutes.ToString("D2");
+                txtDeltaMinute.Text = _activeSettings.DeltaTarget.Minutes.ToString("D2");
             }
         }
 
@@ -220,12 +261,12 @@ namespace LiveSplit.PaceAlert.UI
             {
                 txtDeltaSecond.Text = newTime.ToString("D2");
 
-                var oldTime = Settings.DeltaTarget;
-                Settings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime, oldTime.Milliseconds);
+                var oldTime = _activeSettings.DeltaTarget;
+                _activeSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime, oldTime.Milliseconds);
             }
             else
             {
-                txtDeltaSecond.Text = Settings.DeltaTarget.Seconds.ToString("D2");
+                txtDeltaSecond.Text = _activeSettings.DeltaTarget.Seconds.ToString("D2");
             }
         }
 
@@ -235,39 +276,13 @@ namespace LiveSplit.PaceAlert.UI
             {
                 txtDeltaMillisecond.Text = newTime.ToString("D3");
 
-                var oldTime = Settings.DeltaTarget;
-                Settings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
+                var oldTime = _activeSettings.DeltaTarget;
+                _activeSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
             }
             else
             {
-                txtDeltaMillisecond.Text = Settings.DeltaTarget.Milliseconds.ToString("D3");
+                txtDeltaMillisecond.Text = _activeSettings.DeltaTarget.Milliseconds.ToString("D3");
             }
-        }
-
-        private void rdoRealTime_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoRealTime.Checked)
-            {
-                Settings.Comparison = TimingMethod.RealTime;
-            }
-        }
-
-        private void rdoGameTime_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoGameTime.Checked)
-            {
-                Settings.Comparison = TimingMethod.GameTime;
-            }
-        }
-
-        private void cboAheadBehind_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Settings.Ahead = cboAheadBehind.SelectedIndex == 0;
-        }
-
-        private void txtMessage_Validated(object sender, EventArgs e)
-        {
-            Settings.MessageTemplate = txtMessage.Text;
         }
     }
 }

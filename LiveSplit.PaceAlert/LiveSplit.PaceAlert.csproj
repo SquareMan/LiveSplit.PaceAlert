@@ -97,6 +97,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Discord\PaceBot.cs" />
+        <Compile Include="Logic\NotificationSettings.cs" />
         <Compile Include="Logic\Settings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\PaceAlertComponent.cs" />
@@ -153,18 +154,11 @@
         </PropertyGroup>
         <!-- Link base component dll with Discord.NET libraries -->
         <MakeDir Directories="$(LinkedDir)" ContinueOnError="true" />
-        <Exec Command="
-            $(ILMergeConsolePath) /out:$(LinkedTargetPath) ^
-            $(TargetPath) ^
-            $(OutDir)Discord.Net.Core.dll ^
-            $(OutDir)Discord.Net.Rest.dll ^
-            $(OutDir)Discord.Net.Webhook.dll" 
-        />
+        <Exec Command="&#xD;&#xA;            $(ILMergeConsolePath) /out:$(LinkedTargetPath) ^&#xD;&#xA;            $(TargetPath) ^&#xD;&#xA;            $(OutDir)Discord.Net.Core.dll ^&#xD;&#xA;            $(OutDir)Discord.Net.Rest.dll ^&#xD;&#xA;            $(OutDir)Discord.Net.Webhook.dll" />
         <!-- Copy linked dll to LiveSplit component folder for testing -->
         <Exec Command="copy $(LinkedTargetPath) $(ProjectDir)..\..\Livesplit\Components\$(TargetFileName)" />
         <!-- Copy liked dll to repository Component folder if building for Release -->
-        <Exec Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " 
-              Command="copy $(LinkedTargetPath) $(ProjectDir)Components\$(TargetFileName)" />
+        <Exec Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " Command="copy $(LinkedTargetPath) $(ProjectDir)Components\$(TargetFileName)" />
     </Target>
 
 </Project>

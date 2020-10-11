@@ -61,6 +61,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // txtWebhookURL
             // 
+            this.txtWebhookURL.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWebhookURL.Location = new System.Drawing.Point(12, 12);
             this.txtWebhookURL.Name = "txtWebhookURL";
             this.txtWebhookURL.Size = new System.Drawing.Size(351, 20);
@@ -69,12 +70,14 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // lblFail
             // 
+            this.lblFail.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblFail.ForeColor = System.Drawing.Color.Red;
             this.lblFail.Location = new System.Drawing.Point(12, 42);
             this.lblFail.Name = "lblFail";
             this.lblFail.Size = new System.Drawing.Size(179, 23);
             this.lblFail.TabIndex = 3;
             this.lblFail.Text = "Failed to connect to webhook ";
+            this.lblFail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblFail.Visible = false;
             // 
             // WebhookURLForm

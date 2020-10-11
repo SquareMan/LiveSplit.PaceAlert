@@ -61,7 +61,8 @@ namespace LiveSplit.PaceAlert.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to $delta - The delta between PB and Current Run for the selected split
+        ///   Looks up a localized string similar to &lt;@!id&gt; - Mentions a user/role where id is the numerical id of that user/role.
+        ///$delta - The delta between PB and Current Run for the selected split
         ///$split - The name of the selected split..
         /// </summary>
         internal static string NotificationMessageVariablesDescription {

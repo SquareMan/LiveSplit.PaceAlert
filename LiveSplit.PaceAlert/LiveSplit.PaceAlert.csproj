@@ -153,6 +153,7 @@
             <LinkedTargetPath>$(LinkedDir)$(TargetFileName)</LinkedTargetPath>
         </PropertyGroup>
         <!-- Link base component dll with Discord.NET libraries -->
+        <!-- Uncomment to add ILMerge functionality back
         <MakeDir Directories="$(LinkedDir)" ContinueOnError="true" />
         <Exec Command="
             $(ILMergeConsolePath) /out:$(LinkedTargetPath) ^
@@ -163,10 +164,14 @@
             $(OutDir)System.Collections.Immutable.dll ^
             $(OutDir)Newtonsoft.Json.dll"
         />
-        <!-- Copy linked dll to LiveSplit component folder for testing -->
         <Exec Command="copy $(LinkedTargetPath) $(ProjectDir)..\..\Livesplit\Components\$(TargetFileName)" />
-        <!-- Copy liked dll to repository Component folder if building for Release -->
         <Exec Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " Command="copy $(LinkedTargetPath) $(ProjectDir)Components\$(TargetFileName)" />
+        -->
+        
+        <!-- Copy linked dll to LiveSplit component folder for testing -->
+        <Exec Command="copy $(TargetPath) $(ProjectDir)..\..\Livesplit\Components\$(TargetFileName)" />
+        <!-- Copy liked dll to repository Component folder if building for Release -->
+        <Exec Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " Command="copy $(TargetPath) $(ProjectDir)Components\$(TargetFileName)" />
     </Target>
 
 </Project>

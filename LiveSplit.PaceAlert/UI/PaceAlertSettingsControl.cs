@@ -26,16 +26,20 @@ namespace LiveSplit.PaceAlert.UI
             
             InitializeComponent();
             BuildSplitNames();
+            SetActiveSettings();
             state.RunManuallyModified += splitNames_RunManuallyModified;
         }
 
         public XmlNode GetSettings(XmlDocument document)
         {
-            _activeSettings.SelectedSplit = cboSelectedSplit.SelectedIndex;
-            _activeSettings.Ahead = cboSelectedSplit.SelectedIndex == 0;
-            _activeSettings.Comparison = rdoRealTime.Checked ? TimingMethod.RealTime : TimingMethod.GameTime;
-            _activeSettings.MessageTemplate = txtMessage.Text;
-            
+            if (_activeSettings != null)
+            {
+                _activeSettings.SelectedSplit = cboSelectedSplit.SelectedIndex;
+                _activeSettings.Ahead = cboSelectedSplit.SelectedIndex == 0;
+                _activeSettings.Comparison = rdoRealTime.Checked ? TimingMethod.RealTime : TimingMethod.GameTime;
+                _activeSettings.MessageTemplate = txtMessage.Text;
+            }
+
             var settingsElement = document.CreateElement("Settings");
             SettingsHelper.CreateSetting(document, settingsElement, "Version",
                 Assembly.GetExecutingAssembly().GetName().Version.ToString(3));

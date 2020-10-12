@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -22,6 +23,10 @@ namespace LiveSplit.PaceAlert.UI
         public PaceAlertComponent(LiveSplitState state)
         {
             _state = state;
+            
+            // TODO: Need to do this so GetSettings doesn't steal a previous layout's settings (Should probably stop using static settings)
+            Settings.SettingsDictionary = new Dictionary<string, NotificationSettings>();
+            
             _settingsControlControl = new PaceAlertSettingsControl(state);
             StartBot();
 

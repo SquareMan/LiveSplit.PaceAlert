@@ -95,6 +95,12 @@ namespace LiveSplit.PaceAlert.UI
 
         private void SetActiveSettings()
         {
+            if (_state.Run.FilePath == null)
+            {
+                // No split file is opened.
+                return;
+            }
+        
             //Set form settings to settings associated with currently opened splits file.
             _activeSettings = Settings.GetActiveSettings(_state);
             if (_activeSettings == null)
@@ -207,6 +213,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private void PaceAlertSettingsControl_Load(object sender, EventArgs e)
         {
+            grpNotificationCondition.Visible = _activeSettings != null;
             UpdatePaceBotStatus();
         }
 

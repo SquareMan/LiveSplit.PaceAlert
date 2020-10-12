@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<updates>
+    <update version="0.1.0">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> Initial Testing Release </change>
+        </changelog>
+    </update>
+</updates>

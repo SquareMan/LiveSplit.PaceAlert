@@ -36,6 +36,7 @@ namespace LiveSplit.PaceAlert.UI
 
         public override void Dispose()
         {
+            _settingsControlControl.Dispose();
             _state.OnSplit -= PaceAlert_OnSplit;
             _state.OnStart -= PaceAlert_OnStart;
         }

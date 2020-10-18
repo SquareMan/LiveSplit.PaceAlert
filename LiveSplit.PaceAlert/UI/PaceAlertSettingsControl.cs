@@ -30,6 +30,22 @@ namespace LiveSplit.PaceAlert.UI
             state.RunManuallyModified += splitNames_RunManuallyModified;
         }
 
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            _state.RunManuallyModified -= splitNames_RunManuallyModified;
+
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
         public XmlNode GetSettings(XmlDocument document)
         {
             if (_activeSettings != null)

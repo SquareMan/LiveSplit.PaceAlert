@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -17,6 +16,7 @@ namespace LiveSplit.PaceAlert.UI
         public override string ComponentName => PaceAlertFactory.PaceAlertName;
 
         private LiveSplitState _state;
+        private ComponentSettings _settings;
         private PaceAlertSettingsControl _settingsControlControl;
         private bool notified = false;
 
@@ -24,10 +24,8 @@ namespace LiveSplit.PaceAlert.UI
         {
             _state = state;
             
-            // TODO: Need to do this so GetSettings doesn't steal a previous layout's settings (Should probably stop using static settings)
-            Settings.SettingsDictionary = new Dictionary<string, NotificationSettings>();
-            
-            _settingsControlControl = new PaceAlertSettingsControl(state);
+            _settings = new ComponentSettings();
+            _settingsControlControl = new PaceAlertSettingsControl(state, _settings);
             StartBot();
 
             _state.OnSplit += PaceAlert_OnSplit;
@@ -73,52 +71,56 @@ namespace LiveSplit.PaceAlert.UI
 
         private void PaceAlert_OnSplit(object sender, EventArgs e)
         {
-            var activeSettings = Settings.GetActiveSettings(_state);
-            
-            if (!notified && _state.CurrentSplitIndex == activeSettings.SelectedSplit + 1)
+            var activeSettings = _settings.GetActiveSettings(_state);
+
+            foreach (var setting in activeSettings)
             {
-                var split = _state.Run[activeSettings.SelectedSplit];
-                var delta = (split.SplitTime - split.PersonalBestSplitTime)[activeSettings.Comparison];
+                if (notified || _state.CurrentSplitIndex != setting.SelectedSplit + 1)
+                    continue;
+                
+                var split = _state.Run[setting.SelectedSplit];
+                var delta = (split.SplitTime - split.PersonalBestSplitTime)[setting.Comparison];
 
-                if (delta.HasValue)
+                if (!delta.HasValue) continue;
+                
+                var deltaValue = delta.Value;
+                var deltaTarget = setting.Ahead
+                    ? setting.DeltaTarget.Negate()
+                    : setting.DeltaTarget;
+
+                if (!(deltaValue.TotalSeconds < deltaTarget.TotalSeconds))
+                    continue;
+                
+                StringBuilder messageStringBuilder = new StringBuilder();
+                string[] substrings = setting.MessageTemplate.Split('$');
+                foreach (var substring in substrings)
                 {
-                    var deltaValue = delta.Value;
-                    var deltaTarget = activeSettings.Ahead ? activeSettings.DeltaTarget.Negate() : activeSettings.DeltaTarget;
-                    
-                    if (deltaValue.TotalSeconds < deltaTarget.TotalSeconds)
+                    //Parse message variables
+                    if (substring.StartsWith("delta"))
                     {
-                        StringBuilder messageStringBuilder = new StringBuilder();
-                        string[] substrings = activeSettings.MessageTemplate.Split('$');
-                        foreach (var substring in substrings)
-                        {
-                            //Parse message variables
-                            if (substring.StartsWith("delta"))
-                            {
-                                string time = ToDeltaFormat(deltaValue);
-                                char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
-                                messageStringBuilder.Append(negative + time);
-                                messageStringBuilder.Append(substring.Substring("delta".Length));
-                            }
-                            else if (substring.StartsWith("split"))
-                            {
-                                messageStringBuilder.Append(split.Name);
-                                messageStringBuilder.Append(substring.Substring("split".Length));
-                            }
-                            else
-                            {
-                                messageStringBuilder.Append(substring);
-                            }
-                        }
-
-                        var messageString = messageStringBuilder.ToString();
-                        if (messageString != string.Empty)
-                        {
-                            PaceBot.SendMessage(messageString);
-                        }
-
-                        notified = true;
+                        string time = ToDeltaFormat(deltaValue);
+                        char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
+                        messageStringBuilder.Append(negative + time);
+                        messageStringBuilder.Append(substring.Substring("delta".Length));
+                    }
+                    else if (substring.StartsWith("split"))
+                    {
+                        messageStringBuilder.Append(split.Name);
+                        messageStringBuilder.Append(substring.Substring("split".Length));
+                    }
+                    else
+                    {
+                        messageStringBuilder.Append(substring);
                     }
                 }
+
+                var messageString = messageStringBuilder.ToString();
+                if (messageString != string.Empty)
+                {
+                    PaceBot.SendMessage(messageString);
+                }
+
+                notified = true;
             }
         }
 

@@ -9,19 +9,20 @@ using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
 using LiveSplit.PaceAlert.Logic;
 using LiveSplit.UI;
-using Settings = LiveSplit.PaceAlert.Logic.Settings;
 
 namespace LiveSplit.PaceAlert.UI
 {
     public partial class PaceAlertSettingsControl : UserControl
     {
         private LiveSplitState _state;
-        private NotificationSettings _activeSettings;
+        private ComponentSettings _settings;
         private BindingList<string> splitNames;
+        private List<NotificationSettings> _activeSettingsList; 
         
-        public PaceAlertSettingsControl(LiveSplitState state)
+        public PaceAlertSettingsControl(LiveSplitState state, ComponentSettings componentSettings)
         {
             _state = state;
+            _settings = componentSettings;
             Dock = DockStyle.Fill;
             
             InitializeComponent();
@@ -48,14 +49,6 @@ namespace LiveSplit.PaceAlert.UI
 
         public XmlNode GetSettings(XmlDocument document)
         {
-            if (_activeSettings != null)
-            {
-                _activeSettings.SelectedSplit = cboSelectedSplit.SelectedIndex;
-                _activeSettings.Ahead = cboSelectedSplit.SelectedIndex == 0;
-                _activeSettings.Comparison = rdoRealTime.Checked ? TimingMethod.RealTime : TimingMethod.GameTime;
-                _activeSettings.MessageTemplate = txtMessage.Text;
-            }
-
             var settingsElement = document.CreateElement("Settings");
             SettingsHelper.CreateSetting(document, settingsElement, "Version",
                 Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
@@ -63,46 +56,63 @@ namespace LiveSplit.PaceAlert.UI
             var splitsElement = document.CreateElement("RunFiles");
             settingsElement.AppendChild(splitsElement);
             
-            foreach (var runSettingsKvp in Settings.SettingsDictionary)
+            foreach (var runSettingsKvp in _settings.SettingsDictionary)
             {
                 var runElement = document.CreateElement("Run");
                 splitsElement.AppendChild(runElement);
-                
-                // Serialize settings for notification
-                var runSettings = runSettingsKvp.Value;
                 SettingsHelper.CreateSetting(document, runElement, "FilePath", runSettingsKvp.Key);
-                SettingsHelper.CreateSetting(document, runElement, "SelectedSplit", runSettings.SelectedSplit);
-                SettingsHelper.CreateSetting(document, runElement, "DeltaTarget", runSettings.DeltaTarget);
-                SettingsHelper.CreateSetting(document, runElement, "Ahead", runSettings.Ahead);
-                SettingsHelper.CreateSetting(document, runElement, "Comparison", runSettings.Comparison);
-                SettingsHelper.CreateSetting(document, runElement, "MessageTemplate", runSettings.MessageTemplate);
+                var runSettings = runSettingsKvp.Value;
+                
+                // Serialize settings for notifications
+                foreach (var setting in runSettings)
+                {
+                    var settingElement = document.CreateElement("Notification");
+                    runElement.AppendChild(settingElement);
+                    
+                    SettingsHelper.CreateSetting(document, settingElement, "SelectedSplit", setting.SelectedSplit);
+                    SettingsHelper.CreateSetting(document, settingElement, "DeltaTarget", setting.DeltaTarget);
+                    SettingsHelper.CreateSetting(document, settingElement, "Ahead", setting.Ahead);
+                    SettingsHelper.CreateSetting(document, settingElement, "Comparison", setting.Comparison);
+                    SettingsHelper.CreateSetting(document, settingElement, "MessageTemplate", setting.MessageTemplate);
+                }
             }
             
             return settingsElement;
         }
 
-        public void SetSettings(XmlNode settings)
+        public void SetSettings(XmlNode settingsNode)
         {
-            Settings.SettingsDictionary = new Dictionary<string, NotificationSettings>();
+            _settings.SettingsDictionary.Clear();
 
-            var runFileList = settings.SelectNodes(".//RunFiles/Run");
-            if (runFileList != null)
+            var runNodes = settingsNode.SelectNodes(".//Run");
+            if (runNodes != null)
             {
-                foreach (XmlNode runNode in runFileList)
+                foreach (XmlNode runNode in runNodes)
                 {
                     string filePath = SettingsHelper.ParseString(runNode["FilePath"]);
-                    if (filePath == null) continue;
+                    if (filePath == null)
+                        continue;
                     
-                    var notificationSettings = new NotificationSettings
+                    var notificationSettingsList = new List<NotificationSettings>();
+                    _settings.SettingsDictionary.Add(filePath, notificationSettingsList);
+
+                    var notificationNodes = runNode.SelectNodes("Notification");
+                    if (notificationNodes == null) 
+                        continue;
+                    
+                    foreach (XmlNode notificationNode in notificationNodes)
                     {
-                        SelectedSplit = SettingsHelper.ParseInt(runNode["SelectedSplit"], -1),
-                        DeltaTarget = SettingsHelper.ParseTimeSpan(runNode["DeltaTarget"], TimeSpan.Zero),
-                        Ahead = SettingsHelper.ParseBool(runNode["Ahead"], true),
-                        Comparison = SettingsHelper.ParseEnum(runNode["Comparison"], TimingMethod.RealTime),
-                        MessageTemplate = SettingsHelper.ParseString(runNode["MessageTemplate"], string.Empty)
-                    };
-                    
-                    Settings.SettingsDictionary.Add(filePath, notificationSettings);
+                        var notificationSettings = new NotificationSettings
+                        {
+                            SelectedSplit = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1),
+                            DeltaTarget = SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero),
+                            Ahead = SettingsHelper.ParseBool(notificationNode["Ahead"], true),
+                            Comparison = SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
+                            MessageTemplate = SettingsHelper.ParseString(notificationNode["MessageTemplate"], string.Empty)
+                        };
+
+                        notificationSettingsList.Add(notificationSettings);
+                    }
                 }    
             }
 
@@ -116,35 +126,34 @@ namespace LiveSplit.PaceAlert.UI
                 // No split file is opened.
                 return;
             }
-        
+            
             //Set form settings to settings associated with currently opened splits file.
-            _activeSettings = Settings.GetActiveSettings(_state);
-            if (_activeSettings == null)
+            bool settingsExist = _settings.SettingsDictionary.TryGetValue(_state.Run.FilePath, out _activeSettingsList);
+            if (!settingsExist)
             {
-                _activeSettings = new NotificationSettings();
-                Settings.SettingsDictionary.Add(_state.Run.FilePath, _activeSettings);
+                // No Settings Found
+                _activeSettingsList = new List<NotificationSettings>();
+                _settings.SettingsDictionary.Add(_state.Run.FilePath, _activeSettingsList);
             }
-
-            cboSelectedSplit.SelectedIndex = _activeSettings.SelectedSplit;
-            cboAheadBehind.SelectedIndex = _activeSettings.Ahead ? 0 : 1;
-            txtMessage.Text = _activeSettings.MessageTemplate;
         
-            // Set individual time text boxes, using TotalHours to account for TimeSpans with 24 or more hours
-            txtDeltaHour.Text = ((int)_activeSettings.DeltaTarget.TotalHours).ToString("D2");
-            txtDeltaMinute.Text = _activeSettings.DeltaTarget.Minutes.ToString("D2");
-            txtDeltaSecond.Text = _activeSettings.DeltaTarget.Seconds.ToString("D2");
-            txtDeltaMillisecond.Text = _activeSettings.DeltaTarget.Milliseconds.ToString("D3");
-
-            // Parse Settings for Timing Method Comparison
-            switch (_activeSettings.Comparison)
+            flpConditionList.Controls.Clear();
+            foreach (var setting in _activeSettingsList)
             {
-                case TimingMethod.RealTime:
-                    rdoRealTime.Checked = true;
-                    break;
-                case TimingMethod.GameTime:
-                    rdoGameTime.Checked = true;
-                    break;
+                AddNotificationControl(setting);
             }
+        }
+
+        internal void RemoveNotificationControl(NotificationSettingsControl control)
+        {
+            flpConditionList.Controls.Remove(control);
+            _activeSettingsList.Remove(control.BoundSettings);
+        }
+        
+        private void AddNotificationControl(NotificationSettings settings)
+        {
+            var notificationControl = new NotificationSettingsControl(splitNames);
+            notificationControl.BindSettings(settings);
+            flpConditionList.Controls.Add(notificationControl);
         }
         
         private void UpdatePaceBotStatus()
@@ -169,14 +178,20 @@ namespace LiveSplit.PaceAlert.UI
             {
                 splitNames.Add(_state.Run[i].Name);
             }
-            
-            cboSelectedSplit.DataSource = splitNames;
         }
 
         private void splitNames_RunManuallyModified(object sender, EventArgs e)
         {
-            // TODO: Moving splits Up/Down results in a deletion followed by an addition, which isn't handled correctly
+            // Determine if a new splits file has been loaded
+            var newActiveSettings = _settings.GetActiveSettings(_state);
+            if (newActiveSettings != _activeSettingsList)
+            {
+                BuildSplitNames();
+                SetActiveSettings();
+                return;
+            }
             
+            // TODO: Moving splits Up/Down results in a deletion followed by an addition, which isn't handled correctly
             for (int i = 0; i < _state.Run.Count; i++)
             {
                 if (splitNames.Count > i)
@@ -195,11 +210,6 @@ namespace LiveSplit.PaceAlert.UI
                     {
                         //Split was removed at this index
                         splitNames.RemoveAt(i);
-                        if (i == cboSelectedSplit.SelectedIndex)
-                        {
-                            //Selected Split was deleted, deselect all splits
-                            cboSelectedSplit.SelectedIndex = -1;
-                        }
 
                         break;
                     }
@@ -218,18 +228,12 @@ namespace LiveSplit.PaceAlert.UI
                 //Split was removed from end
                 splitNames.RemoveAt(splitNames.Count - 1);
             }
-
-            // Determine if a new splits file has been loaded
-            var newActiveSettings = Settings.GetActiveSettings(_state);
-            if (newActiveSettings != _activeSettings)
-            {
-                SetActiveSettings();
-            }
         }
 
         private void PaceAlertSettingsControl_Load(object sender, EventArgs e)
         {
-            grpNotificationCondition.Visible = _activeSettings != null;
+            flpConditionList.Visible = _activeSettingsList != null;
+            btnAddNotification.Visible = _activeSettingsList != null;
             UpdatePaceBotStatus();
         }
 
@@ -247,69 +251,11 @@ namespace LiveSplit.PaceAlert.UI
             MessageBox.Show(Strings.NotificationMessageVariablesDescription, "Message Variables");
         }
 
-        private void btnSendMessage_Click(object sender, EventArgs e)
+        private void btnAddNotification_Click(object sender, EventArgs e)
         {
-            PaceBot.SendMessage(txtMessage.Text);
-        }
-
-        private void txtDeltaHour_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaHour.Text, out var newTime) && newTime >= 0)
-            {
-                txtDeltaHour.Text = newTime.ToString("D2");
-
-                var oldTime = _activeSettings.DeltaTarget;
-                _activeSettings.DeltaTarget = new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
-            }
-            else
-            {
-                txtDeltaHour.Text = ((int)_activeSettings.DeltaTarget.TotalHours).ToString("D2");
-            }
-        }
-
-        private void txtDeltaMinute_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaMinute.Text, out var newTime) && newTime >= 0 && newTime < 60)
-            {
-                txtDeltaMinute.Text = newTime.ToString("D2");
-
-                var oldTime = _activeSettings.DeltaTarget;
-                _activeSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds, oldTime.Milliseconds);
-            }
-            else
-            {
-                txtDeltaMinute.Text = _activeSettings.DeltaTarget.Minutes.ToString("D2");
-            }
-        }
-
-        private void txtDeltaSecond_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaSecond.Text, out var newTime) && newTime >= 0 && newTime < 60)
-            {
-                txtDeltaSecond.Text = newTime.ToString("D2");
-
-                var oldTime = _activeSettings.DeltaTarget;
-                _activeSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime, oldTime.Milliseconds);
-            }
-            else
-            {
-                txtDeltaSecond.Text = _activeSettings.DeltaTarget.Seconds.ToString("D2");
-            }
-        }
-
-        private void txtDeltaMillisecond_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaMillisecond.Text, out var newTime) && newTime >= 0 && newTime < 1000)
-            {
-                txtDeltaMillisecond.Text = newTime.ToString("D3");
-
-                var oldTime = _activeSettings.DeltaTarget;
-                _activeSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
-            }
-            else
-            {
-                txtDeltaMillisecond.Text = _activeSettings.DeltaTarget.Milliseconds.ToString("D3");
-            }
+            var newSettings = new NotificationSettings();
+            _activeSettingsList.Add(newSettings);
+            AddNotificationControl(newSettings);
         }
     }
 }

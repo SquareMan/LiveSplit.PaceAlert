@@ -97,6 +97,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Discord\PaceBot.cs" />
+        <Compile Include="Logic\NotificationManager.cs" />
         <Compile Include="Logic\NotificationSettings.cs" />
         <Compile Include="Logic\ComponentSettings.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

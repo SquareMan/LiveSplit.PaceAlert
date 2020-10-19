@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update version="0.2.0">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> Add ability to have multiple notifications (This will break existing settings). </change>
+            <change> Update variables list to show proper formatting for mentioning a role. </change>
+        </changelog>
+    </update>
     <update version="0.1.1">
         <files>
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>

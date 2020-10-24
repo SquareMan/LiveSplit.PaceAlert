@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update version="0.2.1">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> Fix potential memory leak related to not cleaning up properly when destroying the component. </change>
+        </changelog>
+    </update>
     <update version="0.2.0">
         <files>
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>

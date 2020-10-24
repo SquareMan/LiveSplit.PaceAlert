@@ -33,6 +33,7 @@ namespace LiveSplit.PaceAlert.UI
         public override void Dispose()
         {
             _settingsControlControl.Dispose();
+            _notificationManager.Dispose();
         }
 
         private void StartBot()

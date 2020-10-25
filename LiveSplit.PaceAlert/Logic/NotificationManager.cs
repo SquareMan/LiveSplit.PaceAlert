@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
 
@@ -27,30 +29,21 @@ namespace LiveSplit.PaceAlert.Logic
 
         public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan deltaValue, ISegment split)
         {
-            StringBuilder messageStringBuilder = new StringBuilder();
-            string[] substrings = notificationSettings.MessageTemplate.Split('$');
-            foreach (var substring in substrings)
+            var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"[$]\S+", match =>
             {
-                //Parse message variables
-                if (substring.StartsWith("delta"))
+                switch (match.Value)
                 {
-                    string time = ToDeltaFormat(deltaValue);
-                    char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
-                    messageStringBuilder.Append(negative + time);
-                    messageStringBuilder.Append(substring.Substring("delta".Length));
+                    case "$delta":
+                        string time = ToDeltaFormat(deltaValue);
+                        char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
+                        return negative + time;
+                    case "$split":
+                        return split.Name;
+                    default:
+                        return match.Value;
                 }
-                else if (substring.StartsWith("split"))
-                {
-                    messageStringBuilder.Append(split.Name);
-                    messageStringBuilder.Append(substring.Substring("split".Length));
-                }
-                else
-                {
-                    messageStringBuilder.Append(substring);
-                }
-            }
-
-            var messageString = messageStringBuilder.ToString();
+            });
+            
             if (messageString != string.Empty)
             {
                 PaceBot.SendMessage(messageString);

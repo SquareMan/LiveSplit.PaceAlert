@@ -25,64 +25,70 @@ namespace LiveSplit.PaceAlert.Logic
             _state.OnSplit -= LiveSplitState_OnSplit;
         }
 
+        public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan deltaValue, ISegment split)
+        {
+            StringBuilder messageStringBuilder = new StringBuilder();
+            string[] substrings = notificationSettings.MessageTemplate.Split('$');
+            foreach (var substring in substrings)
+            {
+                //Parse message variables
+                if (substring.StartsWith("delta"))
+                {
+                    string time = ToDeltaFormat(deltaValue);
+                    char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
+                    messageStringBuilder.Append(negative + time);
+                    messageStringBuilder.Append(substring.Substring("delta".Length));
+                }
+                else if (substring.StartsWith("split"))
+                {
+                    messageStringBuilder.Append(split.Name);
+                    messageStringBuilder.Append(substring.Substring("split".Length));
+                }
+                else
+                {
+                    messageStringBuilder.Append(substring);
+                }
+            }
+
+            var messageString = messageStringBuilder.ToString();
+            if (messageString != string.Empty)
+            {
+                PaceBot.SendMessage(messageString);
+            }
+        }
+
         private void LiveSplitState_OnStart(object sender, EventArgs e)
         {
         }
 
         private void LiveSplitState_OnSplit(object sender, EventArgs e)
         {
-            var activeSettings = _settings.GetActiveSettings(_state);
+            var activeSettingsList = _settings.GetActiveSettings(_state);
 
-            foreach (var setting in activeSettings)
+            foreach (var notificationSettings in activeSettingsList)
             {
-                if (_state.CurrentSplitIndex != setting.SelectedSplit + 1)
+                if (_state.CurrentSplitIndex != notificationSettings.SelectedSplit + 1)
                     continue;
                 
-                var split = _state.Run[setting.SelectedSplit];
-                var delta = (split.SplitTime - split.PersonalBestSplitTime)[setting.Comparison];
+                var split = _state.Run[notificationSettings.SelectedSplit];
+                var delta = (split.SplitTime - split.PersonalBestSplitTime)[notificationSettings.Comparison];
 
-                if (!delta.HasValue) continue;
+                if (!delta.HasValue) 
+                    continue;
                 
                 var deltaValue = delta.Value;
-                var deltaTarget = setting.Ahead
-                    ? setting.DeltaTarget.Negate()
-                    : setting.DeltaTarget;
+                var deltaTarget = notificationSettings.Ahead
+                    ? notificationSettings.DeltaTarget.Negate()
+                    : notificationSettings.DeltaTarget;
 
                 if (!(deltaValue.TotalSeconds < deltaTarget.TotalSeconds))
                     continue;
                 
-                StringBuilder messageStringBuilder = new StringBuilder();
-                string[] substrings = setting.MessageTemplate.Split('$');
-                foreach (var substring in substrings)
-                {
-                    //Parse message variables
-                    if (substring.StartsWith("delta"))
-                    {
-                        string time = ToDeltaFormat(deltaValue);
-                        char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
-                        messageStringBuilder.Append(negative + time);
-                        messageStringBuilder.Append(substring.Substring("delta".Length));
-                    }
-                    else if (substring.StartsWith("split"))
-                    {
-                        messageStringBuilder.Append(split.Name);
-                        messageStringBuilder.Append(substring.Substring("split".Length));
-                    }
-                    else
-                    {
-                        messageStringBuilder.Append(substring);
-                    }
-                }
-
-                var messageString = messageStringBuilder.ToString();
-                if (messageString != string.Empty)
-                {
-                    PaceBot.SendMessage(messageString);
-                }
+                SendMessageFormatted(notificationSettings, deltaValue, split);
             }
         }
 
-        private string ToDeltaFormat(TimeSpan t)
+        private static string ToDeltaFormat(TimeSpan t)
         {
             if (t.Hours != 0)
             {

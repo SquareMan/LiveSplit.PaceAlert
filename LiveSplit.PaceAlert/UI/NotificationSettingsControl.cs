@@ -11,11 +11,14 @@ namespace LiveSplit.PaceAlert.UI
     internal partial class NotificationSettingsControl : UserControl
     {
         public NotificationSettings BoundSettings { get; private set; }
+
+        private LiveSplitState _state;
         
-        public NotificationSettingsControl(IEnumerable splitNames)
+        public NotificationSettingsControl(LiveSplitState state, IEnumerable splitNames)
         {
             InitializeComponent();
 
+            _state = state;
             cboSelectedSplit.DataSource = splitNames;
         }
 
@@ -47,7 +50,7 @@ namespace LiveSplit.PaceAlert.UI
         
         private void btnSendMessage_Click(object sender, EventArgs e)
         {
-            PaceBot.SendMessage(txtMessage.Text);
+            NotificationManager.SendMessageFormatted(BoundSettings, BoundSettings.DeltaTarget, _state.Run[BoundSettings.SelectedSplit]);
         }
 
         private void btnRemove_Click(object sender, EventArgs e)

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="..\packages\ILMerge.3.0.41\build\ILMerge.props" Condition="Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" />
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -150,12 +149,6 @@
       <Content Include="Components\Updates.xml" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-      <PropertyGroup>
-        <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
-      </PropertyGroup>
-      <Error Condition="!Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.41\build\ILMerge.props'))" />
-    </Target>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">
@@ -165,23 +158,7 @@
         <PropertyGroup>
             <LinkedDir>$(OutDir)Link\</LinkedDir>
             <LinkedTargetPath>$(LinkedDir)$(TargetFileName)</LinkedTargetPath>
-        </PropertyGroup>
-        <!-- Link base component dll with Discord.NET libraries -->
-        <!-- Uncomment to add ILMerge functionality back
-        <MakeDir Directories="$(LinkedDir)" ContinueOnError="true" />
-        <Exec Command="
-            $(ILMergeConsolePath) /out:$(LinkedTargetPath) ^
-            $(TargetPath) ^
-            $(OutDir)Discord.Net.Core.dll ^
-            $(OutDir)Discord.Net.Rest.dll ^
-            $(OutDir)Discord.Net.Webhook.dll ^
-            $(OutDir)System.Collections.Immutable.dll ^
-            $(OutDir)Newtonsoft.Json.dll"
-        />
-        <Exec Command="copy $(LinkedTargetPath) $(ProjectDir)..\..\Livesplit\Components\$(TargetFileName)" />
-        <Exec Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " Command="copy $(LinkedTargetPath) $(ProjectDir)Components\$(TargetFileName)" />
-        -->
-        
+        </PropertyGroup>        
         <!-- Copy linked dll to LiveSplit component folder for testing -->
         <Exec Command="copy $(TargetPath) $(ProjectDir)..\..\Livesplit\Components\$(TargetFileName)" />
         <!-- Copy liked dll to repository Component folder if building for Release -->

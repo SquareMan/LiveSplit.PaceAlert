@@ -21,8 +21,8 @@
     <data name="NotificationMessageVariablesDescription" xml:space="preserve">
         <value>&lt;@!id&gt; - Mentions a user where id is the numerical id of that user.
 &lt;@&amp;id&gt; - Mentions a role where id is the numerical id of that role.
-$delta - The delta between PB and Current Run for the selected split
-$split - The name of the selected split.</value>
+$(delta) - The delta between PB and Current Run for the selected split
+$(split) - The name of the selected split.</value>
         <comment>Lists each variable that can be used in a message and what they mean.</comment>
     </data>
 </root>

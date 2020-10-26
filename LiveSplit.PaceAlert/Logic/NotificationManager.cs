@@ -29,15 +29,14 @@ namespace LiveSplit.PaceAlert.Logic
 
         public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan deltaValue, ISegment split)
         {
-            var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"[$]\S+", match =>
+            // Matches all occurrences of 
+            var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"\$\([^)]+\)", match =>
             {
                 switch (match.Value)
                 {
-                    case "$delta":
-                        string time = ToDeltaFormat(deltaValue);
-                        char negative = deltaValue.TotalMilliseconds < 0 ? '-' : '+';
-                        return negative + time;
-                    case "$split":
+                    case "$(delta)":
+                        return ToDeltaFormat(deltaValue) + (deltaValue.TotalMilliseconds < 0 ? '-' : '+');
+                    case "$(split)":
                         return split.Name;
                     default:
                         return match.Value;

@@ -29,7 +29,7 @@ namespace LiveSplit.PaceAlert.Logic
 
         public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan deltaValue, ISegment split)
         {
-            // Matches all occurrences of 
+            // Matches all occurrences of text surrounded with "$(" and ")" and replaces it if it's a valid variable
             var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"\$\([^)]+\)", match =>
             {
                 switch (match.Value)

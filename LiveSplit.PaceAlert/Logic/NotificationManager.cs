@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.PaceAlert.Logic
 {
     public class NotificationManager
     {
+        private static ITimeFormatter _timeFormatter;
         private LiveSplitState _state;
         private ComponentSettings _settings;
         
@@ -16,6 +16,9 @@ namespace LiveSplit.PaceAlert.Logic
         {
             _state = state;
             _settings = settings;
+            
+            // TODO: This should be an instance variable but SendMessageFormatted needs to be static right now.
+            _timeFormatter = new DeltaTimeFormatter();
 
             state.OnStart += LiveSplitState_OnStart;
             state.OnSplit += LiveSplitState_OnSplit;
@@ -35,7 +38,7 @@ namespace LiveSplit.PaceAlert.Logic
                 switch (match.Value)
                 {
                     case "$(delta)":
-                        return ToDeltaFormat(deltaValue) + (deltaValue.TotalMilliseconds < 0 ? '-' : '+');
+                        return _timeFormatter.Format(deltaValue);
                     case "$(split)":
                         return split.Name;
                     default:
@@ -78,21 +81,6 @@ namespace LiveSplit.PaceAlert.Logic
                 
                 SendMessageFormatted(notificationSettings, deltaValue, split);
             }
-        }
-
-        private static string ToDeltaFormat(TimeSpan t)
-        {
-            if (t.Hours != 0)
-            {
-                return t.ToString(@"h\:mm\:ss\.ff");
-            }
-
-            if (t.Minutes != 0)
-            {
-                return t.ToString(@"m\:ss\.ff");
-            }
-            
-            return t.ToString(@"s\.ff");
         }
     }
 }

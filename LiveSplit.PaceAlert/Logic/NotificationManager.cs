@@ -20,13 +20,11 @@ namespace LiveSplit.PaceAlert.Logic
             // TODO: This should be an instance variable but SendMessageFormatted needs to be static right now.
             _timeFormatter = new DeltaTimeFormatter();
 
-            state.OnStart += LiveSplitState_OnStart;
             state.OnSplit += LiveSplitState_OnSplit;
         }
 
         public void Dispose()
         {
-            _state.OnStart -= LiveSplitState_OnStart;
             _state.OnSplit -= LiveSplitState_OnSplit;
         }
 
@@ -51,11 +49,7 @@ namespace LiveSplit.PaceAlert.Logic
                 PaceBot.SendMessage(messageString);
             }
         }
-
-        private void LiveSplitState_OnStart(object sender, EventArgs e)
-        {
-        }
-
+        
         private void LiveSplitState_OnSplit(object sender, EventArgs e)
         {
             var activeSettingsList = _settings.GetActiveSettings(_state);

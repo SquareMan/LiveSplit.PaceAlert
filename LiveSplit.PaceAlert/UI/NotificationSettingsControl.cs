@@ -20,12 +20,14 @@ namespace LiveSplit.PaceAlert.UI
 
             _state = state;
             cboSelectedSplit.DataSource = splitNames;
+            cboNotificationType.DataSource = Enum.GetValues(typeof(NotificationType));
         }
 
         public void BindSettings(NotificationSettings settings)
         {
             BoundSettings = settings;
-            
+
+            cboNotificationType.SelectedIndex = (int)settings.Type;
             cboSelectedSplit.SelectedIndex = settings.SelectedSplit;
             cboAheadBehind.SelectedIndex = settings.Ahead ? 0 : 1;
             txtMessage.Text = settings.MessageTemplate;
@@ -138,6 +140,11 @@ namespace LiveSplit.PaceAlert.UI
         private void txtMessage_Validated(object sender, EventArgs e)
         {
             BoundSettings.MessageTemplate = txtMessage.Text;
+        }
+
+        private void cboNotificationType_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            BoundSettings.Type = (NotificationType)cboNotificationType.SelectedIndex;
         }
     }
 }

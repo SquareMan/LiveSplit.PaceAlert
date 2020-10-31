@@ -33,6 +33,7 @@ namespace LiveSplit.PaceAlert.UI
         private void InitializeComponent()
         {
             this.grpNotificationCondition = new System.Windows.Forms.GroupBox();
+            this.lblNotificationType = new System.Windows.Forms.Label();
             this.grpMessage = new System.Windows.Forms.GroupBox();
             this.btnRemove = new System.Windows.Forms.Button();
             this.txtMessage = new System.Windows.Forms.TextBox();
@@ -51,6 +52,7 @@ namespace LiveSplit.PaceAlert.UI
             this.txtDeltaHour = new System.Windows.Forms.TextBox();
             this.lblDeltaHour = new System.Windows.Forms.Label();
             this.lblDeltaMinute = new System.Windows.Forms.Label();
+            this.cboNotificationType = new System.Windows.Forms.ComboBox();
             this.grpNotificationCondition.SuspendLayout();
             this.grpMessage.SuspendLayout();
             this.grpCondition.SuspendLayout();
@@ -59,23 +61,34 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // grpNotificationCondition
             // 
-            this.grpNotificationCondition.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpNotificationCondition.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpNotificationCondition.Controls.Add(this.cboNotificationType);
+            this.grpNotificationCondition.Controls.Add(this.lblNotificationType);
             this.grpNotificationCondition.Controls.Add(this.grpMessage);
             this.grpNotificationCondition.Controls.Add(this.grpCondition);
             this.grpNotificationCondition.Location = new System.Drawing.Point(0, 0);
             this.grpNotificationCondition.Name = "grpNotificationCondition";
-            this.grpNotificationCondition.Size = new System.Drawing.Size(430, 223);
+            this.grpNotificationCondition.Size = new System.Drawing.Size(430, 275);
             this.grpNotificationCondition.TabIndex = 116;
             this.grpNotificationCondition.TabStop = false;
             this.grpNotificationCondition.Text = "Notification Settings";
             // 
+            // lblNotificationType
+            // 
+            this.lblNotificationType.Location = new System.Drawing.Point(12, 16);
+            this.lblNotificationType.Name = "lblNotificationType";
+            this.lblNotificationType.Size = new System.Drawing.Size(87, 21);
+            this.lblNotificationType.TabIndex = 118;
+            this.lblNotificationType.Text = "Notification Type";
+            this.lblNotificationType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // grpMessage
             // 
-            this.grpMessage.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpMessage.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.grpMessage.Controls.Add(this.btnRemove);
             this.grpMessage.Controls.Add(this.txtMessage);
             this.grpMessage.Controls.Add(this.btnSendMessage);
-            this.grpMessage.Location = new System.Drawing.Point(6, 98);
+            this.grpMessage.Location = new System.Drawing.Point(6, 150);
             this.grpMessage.Name = "grpMessage";
             this.grpMessage.Size = new System.Drawing.Size(418, 119);
             this.grpMessage.TabIndex = 117;
@@ -120,7 +133,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // grpCondition
             // 
-            this.grpCondition.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpCondition.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.grpCondition.Controls.Add(this.cboSelectedSplit);
             this.grpCondition.Controls.Add(this.pnlComparison);
             this.grpCondition.Controls.Add(this.cboAheadBehind);
@@ -132,7 +145,7 @@ namespace LiveSplit.PaceAlert.UI
             this.grpCondition.Controls.Add(this.txtDeltaHour);
             this.grpCondition.Controls.Add(this.lblDeltaHour);
             this.grpCondition.Controls.Add(this.lblDeltaMinute);
-            this.grpCondition.Location = new System.Drawing.Point(6, 19);
+            this.grpCondition.Location = new System.Drawing.Point(6, 71);
             this.grpCondition.Name = "grpCondition";
             this.grpCondition.Size = new System.Drawing.Size(418, 73);
             this.grpCondition.TabIndex = 116;
@@ -280,6 +293,15 @@ namespace LiveSplit.PaceAlert.UI
             this.lblDeltaMinute.Text = "m";
             this.lblDeltaMinute.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // cboNotificationType
+            // 
+            this.cboNotificationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboNotificationType.Location = new System.Drawing.Point(105, 16);
+            this.cboNotificationType.Name = "cboNotificationType";
+            this.cboNotificationType.Size = new System.Drawing.Size(121, 21);
+            this.cboNotificationType.TabIndex = 119;
+            this.cboNotificationType.SelectionChangeCommitted += new System.EventHandler(cboNotificationType_SelectionChangeCommitted);
+            // 
             // NotificationSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -287,7 +309,7 @@ namespace LiveSplit.PaceAlert.UI
             this.AutoSize = true;
             this.Controls.Add(this.grpNotificationCondition);
             this.Name = "NotificationSettingsControl";
-            this.Size = new System.Drawing.Size(430, 226);
+            this.Size = new System.Drawing.Size(430, 278);
             this.grpNotificationCondition.ResumeLayout(false);
             this.grpMessage.ResumeLayout(false);
             this.grpMessage.PerformLayout();
@@ -297,6 +319,8 @@ namespace LiveSplit.PaceAlert.UI
             this.ResumeLayout(false);
         }
 
+        private System.Windows.Forms.ComboBox cboNotificationType;
+        private System.Windows.Forms.Label lblNotificationType;
         private System.Windows.Forms.Button btnRemove;
 
         private System.Windows.Forms.Button btnSendMessage;

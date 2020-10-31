@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
 using LiveSplit.TimeFormatters;
+using LiveSplit.UI.Components;
 
 namespace LiveSplit.PaceAlert.Logic
 {
@@ -70,10 +74,40 @@ namespace LiveSplit.PaceAlert.Logic
                     ? notificationSettings.DeltaTarget.Negate()
                     : notificationSettings.DeltaTarget;
 
-                if (!(deltaValue.TotalSeconds < deltaTarget.TotalSeconds))
-                    continue;
-                
-                SendMessageFormatted(notificationSettings, deltaValue, split);
+                switch (notificationSettings.Type)
+                {
+                    case NotificationType.Delta when deltaValue.TotalSeconds < deltaTarget.TotalSeconds:
+                        SendMessageFormatted(notificationSettings, deltaValue, split);
+                        break;
+                    case NotificationType.BestPossibleTime:
+                        try
+                        {
+                            var predictionComponent =
+                                _state.Layout.LayoutComponents.First(component => component.Component is RunPrediction)
+                                    ?.Component as RunPrediction;
+
+                            if (predictionComponent?.ComponentName == "Best Possible Time" && predictionComponent.GetType()
+                                .GetProperty("InternalComponent", BindingFlags.Instance | BindingFlags.NonPublic)
+                                ?.GetValue(predictionComponent) is InfoTimeComponent internalComponent)
+                            {
+                                var bestPossibleTime = internalComponent.TimeValue;
+                                var offset = split.BestSegmentTime[notificationSettings.Comparison] -
+                                             split.SplitTime[notificationSettings.Comparison];
+                                if (offset > TimeSpan.Zero)
+                                {
+                                    bestPossibleTime -= offset;
+                                }
+
+                                if (bestPossibleTime < notificationSettings.DeltaTarget)
+                                {
+                                    SendMessageFormatted(notificationSettings, deltaValue, split);
+                                }
+                            }
+                        }
+                        catch (InvalidOperationException exception) {}
+
+                        break;
+                }
             }
         }
     }

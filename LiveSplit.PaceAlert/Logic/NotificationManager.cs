@@ -64,9 +64,9 @@ namespace LiveSplit.PaceAlert.Logic
                     continue;
                 
                 var pbDelta = LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit,
-                    "Personal Best", notificationSettings.Comparison);
+                    "Personal Best", notificationSettings.TimingMethod);
                 var bestPossibleTime =
-                    LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit, "Best Segments", notificationSettings.Comparison) + _state.Run.Last().Comparisons["Best Segments"][notificationSettings.Comparison];
+                    LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit, "Best Segments", notificationSettings.TimingMethod) + _state.Run.Last().Comparisons["Best Segments"][notificationSettings.TimingMethod];
                 
                 var deltaTarget = notificationSettings.Ahead
                     ? notificationSettings.DeltaTarget.Negate()

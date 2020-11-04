@@ -9,7 +9,7 @@ namespace LiveSplit.PaceAlert.Logic
         public int SelectedSplit;
         public TimeSpan DeltaTarget;
         public bool Ahead;
-        public TimingMethod Comparison;
+        public TimingMethod TimingMethod;
         public string MessageTemplate;
 
         public NotificationSettings()
@@ -18,7 +18,7 @@ namespace LiveSplit.PaceAlert.Logic
             SelectedSplit = -1;
             DeltaTarget = TimeSpan.Zero;
             Ahead = true;
-            Comparison = TimingMethod.RealTime;
+            TimingMethod = TimingMethod.RealTime;
             MessageTemplate = string.Empty;
         }
     }

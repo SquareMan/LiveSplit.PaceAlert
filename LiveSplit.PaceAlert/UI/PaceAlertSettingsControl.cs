@@ -73,7 +73,7 @@ namespace LiveSplit.PaceAlert.UI
                     SettingsHelper.CreateSetting(document, settingElement, "SelectedSplit", setting.SelectedSplit);
                     SettingsHelper.CreateSetting(document, settingElement, "DeltaTarget", setting.DeltaTarget);
                     SettingsHelper.CreateSetting(document, settingElement, "Ahead", setting.Ahead);
-                    SettingsHelper.CreateSetting(document, settingElement, "Comparison", setting.Comparison);
+                    SettingsHelper.CreateSetting(document, settingElement, "Comparison", setting.TimingMethod);
                     SettingsHelper.CreateSetting(document, settingElement, "MessageTemplate", setting.MessageTemplate);
                 }
             }
@@ -109,7 +109,7 @@ namespace LiveSplit.PaceAlert.UI
                             SelectedSplit = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1),
                             DeltaTarget = SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero),
                             Ahead = SettingsHelper.ParseBool(notificationNode["Ahead"], true),
-                            Comparison = SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
+                            TimingMethod = SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
                             MessageTemplate = SettingsHelper.ParseString(notificationNode["MessageTemplate"], string.Empty)
                         };
 

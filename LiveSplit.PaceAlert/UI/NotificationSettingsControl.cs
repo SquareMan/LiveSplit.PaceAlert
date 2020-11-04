@@ -39,7 +39,7 @@ namespace LiveSplit.PaceAlert.UI
             txtDeltaMillisecond.Text = settings.DeltaTarget.Milliseconds.ToString("D3");
 
             // Parse Settings for Timing Method Comparison
-            switch (settings.Comparison)
+            switch (settings.TimingMethod)
             {
                 case TimingMethod.RealTime:
                     rdoRealTime.Checked = true;
@@ -134,7 +134,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private void rdoRealTime_CheckedChanged(object sender, EventArgs e)
         {
-            BoundSettings.Comparison = rdoRealTime.Checked ? TimingMethod.RealTime : TimingMethod.GameTime;
+            BoundSettings.TimingMethod = rdoRealTime.Checked ? TimingMethod.RealTime : TimingMethod.GameTime;
         }
 
         private void txtMessage_Validated(object sender, EventArgs e)

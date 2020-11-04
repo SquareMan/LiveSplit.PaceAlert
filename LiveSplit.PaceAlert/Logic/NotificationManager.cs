@@ -32,7 +32,7 @@ namespace LiveSplit.PaceAlert.Logic
             _state.OnSplit -= LiveSplitState_OnSplit;
         }
 
-        public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan deltaValue, ISegment split)
+        public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan? deltaValue, ISegment split)
         {
             // Matches all occurrences of text surrounded with "$(" and ")" and replaces it if it's a valid variable
             var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"\$\([^)]+\)", match =>
@@ -63,49 +63,22 @@ namespace LiveSplit.PaceAlert.Logic
                 if (_state.CurrentSplitIndex != notificationSettings.SelectedSplit + 1)
                     continue;
                 
-                var split = _state.Run[notificationSettings.SelectedSplit];
-                var delta = (split.SplitTime - split.PersonalBestSplitTime)[notificationSettings.Comparison];
-
-                if (!delta.HasValue) 
-                    continue;
+                var pbDelta = LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit,
+                    "Personal Best", notificationSettings.Comparison);
+                var bestPossibleTime =
+                    LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit, "Best Segments", notificationSettings.Comparison) + _state.Run.Last().Comparisons["Best Segments"][notificationSettings.Comparison];
                 
-                var deltaValue = delta.Value;
                 var deltaTarget = notificationSettings.Ahead
                     ? notificationSettings.DeltaTarget.Negate()
                     : notificationSettings.DeltaTarget;
 
                 switch (notificationSettings.Type)
                 {
-                    case NotificationType.Delta when deltaValue.TotalSeconds < deltaTarget.TotalSeconds:
-                        SendMessageFormatted(notificationSettings, deltaValue, split);
+                    case NotificationType.Delta when pbDelta < deltaTarget:
+                        SendMessageFormatted(notificationSettings, pbDelta, _state.Run[notificationSettings.SelectedSplit]);
                         break;
-                    case NotificationType.BestPossibleTime:
-                        try
-                        {
-                            var predictionComponent =
-                                _state.Layout.LayoutComponents.First(component => component.Component is RunPrediction)
-                                    ?.Component as RunPrediction;
-
-                            if (predictionComponent?.ComponentName == "Best Possible Time" && predictionComponent.GetType()
-                                .GetProperty("InternalComponent", BindingFlags.Instance | BindingFlags.NonPublic)
-                                ?.GetValue(predictionComponent) is InfoTimeComponent internalComponent)
-                            {
-                                var bestPossibleTime = internalComponent.TimeValue;
-                                var offset = split.BestSegmentTime[notificationSettings.Comparison] -
-                                             split.SplitTime[notificationSettings.Comparison];
-                                if (offset > TimeSpan.Zero)
-                                {
-                                    bestPossibleTime -= offset;
-                                }
-
-                                if (bestPossibleTime < notificationSettings.DeltaTarget)
-                                {
-                                    SendMessageFormatted(notificationSettings, deltaValue, split);
-                                }
-                            }
-                        }
-                        catch (InvalidOperationException exception) {}
-
+                    case NotificationType.BestPossibleTime when bestPossibleTime < deltaTarget:
+                        SendMessageFormatted(notificationSettings, pbDelta, _state.Run[notificationSettings.SelectedSplit]);
                         break;
                 }
             }

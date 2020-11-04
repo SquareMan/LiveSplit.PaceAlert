@@ -5,6 +5,7 @@
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
         </files>
         <changelog>
+            <change> Added ability to use Best Possible Time as a notification condition </change>
             <change> Adjusted variable syntax </change>
             <change> Send Message (DEBUG) button replaces variables </change>
         </changelog>

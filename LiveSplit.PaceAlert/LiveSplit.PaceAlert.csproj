@@ -55,9 +55,6 @@
         <Reference Include="LiveSplit.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\Livesplit\LiveSplit.Core.dll</HintPath>
         </Reference>
-        <Reference Include="LiveSplit.RunPrediction, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\..\LiveSplit\Components\LiveSplit.RunPrediction.dll</HintPath>
-        </Reference>
         <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
           <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
           <Private>True</Private>

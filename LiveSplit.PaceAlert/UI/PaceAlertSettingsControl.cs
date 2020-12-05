@@ -14,35 +14,32 @@ namespace LiveSplit.PaceAlert.UI
 {
     public partial class PaceAlertSettingsControl : UserControl
     {
-        private LiveSplitState _state;
-        private ComponentSettings _settings;
+        private List<NotificationSettings> _activeSettingsList;
+        private readonly ComponentSettings _settings;
+        private readonly LiveSplitState _state;
         private BindingList<string> splitNames;
-        private List<NotificationSettings> _activeSettingsList; 
-        
+
         public PaceAlertSettingsControl(LiveSplitState state, ComponentSettings componentSettings)
         {
             _state = state;
             _settings = componentSettings;
             Dock = DockStyle.Fill;
-            
+
             InitializeComponent();
             BuildSplitNames();
             SetActiveSettings();
             state.RunManuallyModified += splitNames_RunManuallyModified;
         }
 
-        /// <summary> 
-        /// Clean up any resources being used.
+        /// <summary>
+        ///     Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             _state.RunManuallyModified -= splitNames_RunManuallyModified;
 
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing) components?.Dispose();
 
             base.Dispose(disposing);
         }
@@ -55,14 +52,14 @@ namespace LiveSplit.PaceAlert.UI
 
             var splitsElement = document.CreateElement("RunFiles");
             settingsElement.AppendChild(splitsElement);
-            
+
             foreach (var runSettingsKvp in _settings.SettingsDictionary)
             {
                 var runElement = document.CreateElement("Run");
                 splitsElement.AppendChild(runElement);
                 SettingsHelper.CreateSetting(document, runElement, "FilePath", runSettingsKvp.Key);
                 var runSettings = runSettingsKvp.Value;
-                
+
                 // Serialize settings for notifications
                 foreach (var setting in runSettings)
                 {
@@ -77,7 +74,7 @@ namespace LiveSplit.PaceAlert.UI
                     SettingsHelper.CreateSetting(document, settingElement, "MessageTemplate", setting.MessageTemplate);
                 }
             }
-            
+
             return settingsElement;
         }
 
@@ -87,20 +84,19 @@ namespace LiveSplit.PaceAlert.UI
 
             var runNodes = settingsNode.SelectNodes(".//Run");
             if (runNodes != null)
-            {
                 foreach (XmlNode runNode in runNodes)
                 {
-                    string filePath = SettingsHelper.ParseString(runNode["FilePath"]);
+                    var filePath = SettingsHelper.ParseString(runNode["FilePath"]);
                     if (filePath == null)
                         continue;
-                    
+
                     var notificationSettingsList = new List<NotificationSettings>();
                     _settings.SettingsDictionary.Add(filePath, notificationSettingsList);
 
                     var notificationNodes = runNode.SelectNodes("Notification");
-                    if (notificationNodes == null) 
+                    if (notificationNodes == null)
                         continue;
-                    
+
                     foreach (XmlNode notificationNode in notificationNodes)
                     {
                         var notificationSettings = new NotificationSettings
@@ -109,14 +105,15 @@ namespace LiveSplit.PaceAlert.UI
                             SelectedSplit = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1),
                             DeltaTarget = SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero),
                             Ahead = SettingsHelper.ParseBool(notificationNode["Ahead"], true),
-                            TimingMethod = SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
-                            MessageTemplate = SettingsHelper.ParseString(notificationNode["MessageTemplate"], string.Empty)
+                            TimingMethod =
+                                SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
+                            MessageTemplate =
+                                SettingsHelper.ParseString(notificationNode["MessageTemplate"], string.Empty)
                         };
 
                         notificationSettingsList.Add(notificationSettings);
                     }
-                }    
-            }
+                }
 
             SetActiveSettings();
         }
@@ -124,25 +121,20 @@ namespace LiveSplit.PaceAlert.UI
         private void SetActiveSettings()
         {
             if (_state.Run.FilePath == null)
-            {
                 // No split file is opened.
                 return;
-            }
-            
+
             //Set form settings to settings associated with currently opened splits file.
-            bool settingsExist = _settings.SettingsDictionary.TryGetValue(_state.Run.FilePath, out _activeSettingsList);
+            var settingsExist = _settings.SettingsDictionary.TryGetValue(_state.Run.FilePath, out _activeSettingsList);
             if (!settingsExist)
             {
                 // No Settings Found
                 _activeSettingsList = new List<NotificationSettings>();
                 _settings.SettingsDictionary.Add(_state.Run.FilePath, _activeSettingsList);
             }
-        
+
             flpConditionList.Controls.Clear();
-            foreach (var setting in _activeSettingsList)
-            {
-                AddNotificationControl(setting);
-            }
+            foreach (var setting in _activeSettingsList) AddNotificationControl(setting);
         }
 
         internal void RemoveNotificationControl(NotificationSettingsControl control)
@@ -150,14 +142,14 @@ namespace LiveSplit.PaceAlert.UI
             flpConditionList.Controls.Remove(control);
             _activeSettingsList.Remove(control.BoundSettings);
         }
-        
+
         private void AddNotificationControl(NotificationSettings settings)
         {
             var notificationControl = new NotificationSettingsControl(_state, splitNames);
             notificationControl.BindSettings(settings);
             flpConditionList.Controls.Add(notificationControl);
         }
-        
+
         private void UpdatePaceBotStatus()
         {
             if (PaceBot.IsConnected)
@@ -176,10 +168,7 @@ namespace LiveSplit.PaceAlert.UI
         {
             splitNames = new BindingList<string>();
 
-            for (int i = 0; i < _state.Run.Count; i++)
-            {
-                splitNames.Add(_state.Run[i].Name);
-            }
+            for (var i = 0; i < _state.Run.Count; i++) splitNames.Add(_state.Run[i].Name);
         }
 
         private void splitNames_RunManuallyModified(object sender, EventArgs e)
@@ -192,14 +181,14 @@ namespace LiveSplit.PaceAlert.UI
                 SetActiveSettings();
                 return;
             }
-            
+
             // TODO: Moving splits Up/Down results in a deletion followed by an addition, which isn't handled correctly
-            for (int i = 0; i < _state.Run.Count; i++)
+            for (var i = 0; i < _state.Run.Count; i++)
             {
                 if (splitNames.Count > i)
                 {
                     if (splitNames[i] == _state.Run[i].Name) continue;
-                    
+
                     if (splitNames.Count < _state.Run.Count)
                     {
                         //Split was added at this index
@@ -207,7 +196,7 @@ namespace LiveSplit.PaceAlert.UI
 
                         break;
                     }
-                    
+
                     if (splitNames.Count > _state.Run.Count)
                     {
                         //Split was removed at this index
@@ -215,21 +204,19 @@ namespace LiveSplit.PaceAlert.UI
 
                         break;
                     }
-                    
+
                     //Split was renamed at this index
                     splitNames[i] = _state.Run[i].Name;
                     break;
                 }
-                
+
                 //Split was added to end
                 splitNames.Add(_state.Run[i].Name);
             }
 
             if (splitNames.Count > _state.Run.Count)
-            {
                 //Split was removed from end
                 splitNames.RemoveAt(splitNames.Count - 1);
-            }
         }
 
         private void PaceAlertSettingsControl_Load(object sender, EventArgs e)
@@ -245,6 +232,7 @@ namespace LiveSplit.PaceAlert.UI
             {
                 form.ShowDialog();
             }
+
             UpdatePaceBotStatus();
         }
 

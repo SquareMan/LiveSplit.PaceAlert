@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
@@ -13,22 +11,23 @@ namespace LiveSplit.PaceAlert.UI
 {
     public class PaceAlertComponent : LogicComponent
     {
-        public override string ComponentName => PaceAlertFactory.PaceAlertName;
+        private readonly NotificationManager _notificationManager;
+        private readonly ComponentSettings _settings;
+        private readonly PaceAlertSettingsControl _settingsControlControl;
 
         private LiveSplitState _state;
-        private ComponentSettings _settings;
-        private PaceAlertSettingsControl _settingsControlControl;
-        private NotificationManager _notificationManager;
 
         public PaceAlertComponent(LiveSplitState state)
         {
             _state = state;
-            
+
             _settings = new ComponentSettings();
             _settingsControlControl = new PaceAlertSettingsControl(state, _settings);
             _notificationManager = new NotificationManager(state, _settings);
             StartBot();
         }
+
+        public override string ComponentName => PaceAlertFactory.PaceAlertName;
 
         public override void Dispose()
         {
@@ -50,15 +49,12 @@ namespace LiveSplit.PaceAlert.UI
                 // Do Something
             }
 
-            if (webhookURL != null)
-            {
-                PaceBot.Connect(webhookURL);
-            }
+            if (webhookURL != null) PaceBot.Connect(webhookURL);
         }
 
-        public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
+        public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height,
+            LayoutMode mode)
         {
-            
         }
 
         public override Control GetSettingsControl(LayoutMode mode)

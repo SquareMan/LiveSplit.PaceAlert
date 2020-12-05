@@ -20,21 +20,22 @@ namespace LiveSplit.PaceAlert.UI
                 // TODO: Find better option than plaintext?
                 try
                 {
-                    File.WriteAllText("webhookURL",txtWebhookURL.Text);
+                    File.WriteAllText("webhookURL", txtWebhookURL.Text);
                 }
                 catch (IOException exception)
                 {
                     // Do Something
                 }
-            
+
                 DialogResult = DialogResult.OK;
-                Close();                
+                Close();
             }
             else
             {
                 lblFail.Visible = true;
             }
         }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;

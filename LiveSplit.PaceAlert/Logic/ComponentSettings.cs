@@ -6,7 +6,8 @@ namespace LiveSplit.PaceAlert.Logic
     public class ComponentSettings
     {
         // Dictionary of settings for each splits file, keyed on file path
-        public Dictionary<string, List<NotificationSettings>> SettingsDictionary = new Dictionary<string, List<NotificationSettings>>();
+        public Dictionary<string, List<NotificationSettings>> SettingsDictionary =
+            new Dictionary<string, List<NotificationSettings>>();
 
         public ComponentSettings()
         {
@@ -15,10 +16,7 @@ namespace LiveSplit.PaceAlert.Logic
 
         public List<NotificationSettings> GetActiveSettings(LiveSplitState state)
         {
-            if (state.Run.FilePath == null)
-            {
-                return null;
-            }
+            if (state.Run.FilePath == null) return null;
             return SettingsDictionary.TryGetValue(state.Run.FilePath, out var value) ? value : null;
         }
     }

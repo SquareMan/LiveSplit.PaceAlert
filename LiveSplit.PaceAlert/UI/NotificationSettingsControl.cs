@@ -3,17 +3,14 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using LiveSplit.Model;
-using LiveSplit.PaceAlert.Discord;
 using LiveSplit.PaceAlert.Logic;
 
 namespace LiveSplit.PaceAlert.UI
 {
     internal partial class NotificationSettingsControl : UserControl
     {
-        public NotificationSettings BoundSettings { get; private set; }
+        private readonly LiveSplitState _state;
 
-        private LiveSplitState _state;
-        
         public NotificationSettingsControl(LiveSplitState state, IEnumerable splitNames)
         {
             InitializeComponent();
@@ -23,11 +20,13 @@ namespace LiveSplit.PaceAlert.UI
             cboNotificationType.DataSource = Enum.GetValues(typeof(NotificationType));
         }
 
+        public NotificationSettings BoundSettings { get; private set; }
+
         public void BindSettings(NotificationSettings settings)
         {
             BoundSettings = settings;
 
-            cboNotificationType.SelectedIndex = (int)settings.Type;
+            cboNotificationType.SelectedIndex = (int) settings.Type;
             cboSelectedSplit.SelectedIndex = settings.SelectedSplit;
             cboAheadBehind.SelectedIndex = settings.Ahead ? 0 : 1;
             txtMessage.Text = settings.MessageTemplate;
@@ -49,10 +48,11 @@ namespace LiveSplit.PaceAlert.UI
                     break;
             }
         }
-        
+
         private void btnSendMessage_Click(object sender, EventArgs e)
         {
-            NotificationManager.SendMessageFormatted(_state, BoundSettings, BoundSettings.DeltaTarget, BoundSettings.DeltaTarget, _state.Run[BoundSettings.SelectedSplit]);
+            NotificationManager.SendMessageFormatted(_state, BoundSettings, BoundSettings.DeltaTarget,
+                BoundSettings.DeltaTarget, _state.Run[BoundSettings.SelectedSplit]);
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
@@ -69,11 +69,12 @@ namespace LiveSplit.PaceAlert.UI
                 txtDeltaHour.Text = newTime.ToString("D2");
 
                 var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget = new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
+                BoundSettings.DeltaTarget =
+                    new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
             }
             else
             {
-                txtDeltaHour.Text = ((int)BoundSettings.DeltaTarget.TotalHours).ToString("D2");
+                txtDeltaHour.Text = ((int) BoundSettings.DeltaTarget.TotalHours).ToString("D2");
             }
         }
 
@@ -84,7 +85,8 @@ namespace LiveSplit.PaceAlert.UI
                 txtDeltaMinute.Text = newTime.ToString("D2");
 
                 var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds, oldTime.Milliseconds);
+                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds,
+                    oldTime.Milliseconds);
             }
             else
             {
@@ -99,7 +101,8 @@ namespace LiveSplit.PaceAlert.UI
                 txtDeltaSecond.Text = newTime.ToString("D2");
 
                 var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime, oldTime.Milliseconds);
+                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime,
+                    oldTime.Milliseconds);
             }
             else
             {
@@ -114,7 +117,8 @@ namespace LiveSplit.PaceAlert.UI
                 txtDeltaMillisecond.Text = newTime.ToString("D3");
 
                 var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
+                BoundSettings.DeltaTarget =
+                    new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
             }
             else
             {
@@ -144,7 +148,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private void cboNotificationType_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            BoundSettings.Type = (NotificationType)cboNotificationType.SelectedIndex;
+            BoundSettings.Type = (NotificationType) cboNotificationType.SelectedIndex;
         }
     }
 }

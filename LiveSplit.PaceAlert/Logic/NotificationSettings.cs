@@ -5,21 +5,21 @@ namespace LiveSplit.PaceAlert.Logic
 {
     public class NotificationSettings
     {
-        public NotificationType Type;
-        public int SelectedSplit;
-        public TimeSpan DeltaTarget;
         public bool Ahead;
-        public TimingMethod TimingMethod;
+        public TimeSpan DeltaTarget;
         public string MessageTemplate;
+        public int SelectedSplit;
+        public TimingMethod TimingMethod;
+        public NotificationType Type;
 
         public NotificationSettings()
         {
-            Type = NotificationType.Delta;
-            SelectedSplit = -1;
-            DeltaTarget = TimeSpan.Zero;
             Ahead = true;
-            TimingMethod = TimingMethod.RealTime;
+            DeltaTarget = TimeSpan.Zero;
             MessageTemplate = string.Empty;
+            SelectedSplit = -1;
+            TimingMethod = TimingMethod.RealTime;
+            Type = NotificationType.Delta;
         }
     }
 }

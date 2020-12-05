@@ -12,6 +12,7 @@ namespace LiveSplit.PaceAlert.Logic
 {
     public class NotificationManager
     {
+        private static ITimeFormatter _deltaTimeFormatter;
         private static ITimeFormatter _timeFormatter;
         private LiveSplitState _state;
         private ComponentSettings _settings;
@@ -22,7 +23,8 @@ namespace LiveSplit.PaceAlert.Logic
             _settings = settings;
             
             // TODO: This should be an instance variable but SendMessageFormatted needs to be static right now.
-            _timeFormatter = new DeltaTimeFormatter();
+            _deltaTimeFormatter = new DeltaTimeFormatter();
+            _timeFormatter = new RegularTimeFormatter();
 
             state.OnSplit += LiveSplitState_OnSplit;
         }
@@ -32,7 +34,7 @@ namespace LiveSplit.PaceAlert.Logic
             _state.OnSplit -= LiveSplitState_OnSplit;
         }
 
-        public static void SendMessageFormatted(NotificationSettings notificationSettings, TimeSpan? deltaValue, ISegment split)
+        public static void SendMessageFormatted(LiveSplitState state, NotificationSettings notificationSettings, TimeSpan? deltaValue, TimeSpan? bestPossibleTime, ISegment split)
         {
             // Matches all occurrences of text surrounded with "$(" and ")" and replaces it if it's a valid variable
             var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"\$\([^)]+\)", match =>
@@ -40,9 +42,13 @@ namespace LiveSplit.PaceAlert.Logic
                 switch (match.Value)
                 {
                     case "$(delta)":
-                        return _timeFormatter.Format(deltaValue);
+                        return _deltaTimeFormatter.Format(deltaValue);
+                    case "$(bpt)":
+                        return _deltaTimeFormatter.Format(bestPossibleTime);
                     case "$(split)":
                         return split.Name;
+                    case "$(time)":
+                        return _timeFormatter.Format(state.CurrentTime[notificationSettings.TimingMethod]);
                     default:
                         return match.Value;
                 }
@@ -74,11 +80,10 @@ namespace LiveSplit.PaceAlert.Logic
 
                 switch (notificationSettings.Type)
                 {
+                    case NotificationType.Time when _state.CurrentTime[notificationSettings.TimingMethod] < deltaTarget:
                     case NotificationType.Delta when pbDelta < deltaTarget:
-                        SendMessageFormatted(notificationSettings, pbDelta, _state.Run[notificationSettings.SelectedSplit]);
-                        break;
                     case NotificationType.BestPossibleTime when bestPossibleTime < deltaTarget:
-                        SendMessageFormatted(notificationSettings, pbDelta, _state.Run[notificationSettings.SelectedSplit]);
+                        SendMessageFormatted(_state, notificationSettings, pbDelta, bestPossibleTime, _state.Run[notificationSettings.SelectedSplit]);
                         break;
                 }
             }

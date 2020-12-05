@@ -63,7 +63,9 @@ namespace LiveSplit.PaceAlert.UI {
         /// <summary>
         ///   Looks up a localized string similar to &lt;@!id&gt; - Mentions a user where id is the numerical id of that user.
         ///&lt;@&amp;id&gt; - Mentions a role where id is the numerical id of that role.
-        ///$(delta) - The delta between PB and Current Run for the selected split
+        ///$(time) - The current time of the timer.
+        ///$(delta) - The delta between PB and Current Run for the selected split.
+        ///$(bpt) - The current Best Possible Time of the run.
         ///$(split) - The name of the selected split..
         /// </summary>
         internal static string NotificationMessageVariablesDescription {

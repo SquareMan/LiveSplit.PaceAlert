@@ -52,7 +52,7 @@ namespace LiveSplit.PaceAlert.UI
         
         private void btnSendMessage_Click(object sender, EventArgs e)
         {
-            NotificationManager.SendMessageFormatted(BoundSettings, BoundSettings.DeltaTarget, _state.Run[BoundSettings.SelectedSplit]);
+            NotificationManager.SendMessageFormatted(_state, BoundSettings, BoundSettings.DeltaTarget, BoundSettings.DeltaTarget, _state.Run[BoundSettings.SelectedSplit]);
         }
 
         private void btnRemove_Click(object sender, EventArgs e)

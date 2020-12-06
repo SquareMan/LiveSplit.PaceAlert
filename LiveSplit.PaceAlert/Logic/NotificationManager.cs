@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -12,6 +13,37 @@ namespace LiveSplit.PaceAlert.Logic
     {
         private static ITimeFormatter _deltaTimeFormatter;
         private static ITimeFormatter _timeFormatter;
+
+        private static Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
+        {
+            {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
+            {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},
+            {"$(split)", stats => stats.Split.Name},
+            {"$(time)", stats => _timeFormatter.Format(stats.State.CurrentTime[stats.Settings.TimingMethod])}
+        };
+
+        static NotificationManager()
+        {
+            // TODO: This should be an instance variable but SendMessageFormatted needs to be static right now.
+            _deltaTimeFormatter = new DeltaTimeFormatter();
+            _timeFormatter = new RegularTimeFormatter();
+        }
+
+        public static void SendMessageFormatted(NotificationStats stats, int delay, CancellationToken cancellationToken)
+        {
+            // Matches all occurrences of text surrounded with "$(" and ")" and replaces it if it's a valid variable
+            var messageString = Regex.Replace(stats.Settings.MessageTemplate, @"\$\([^)]+\)", match =>
+            {
+                _variableFuncs.TryGetValue(match.Value, out var func);
+                return func != null ? func.Invoke(stats) : match.Value;
+            });
+
+            if (messageString != string.Empty)
+            {
+                PaceBot.SendMessage(messageString, delay, cancellationToken);
+            }
+        }
+
         private readonly ComponentSettings _settings;
         private readonly LiveSplitState _state;
         private CancellationTokenSource _cancellationTokenSource;
@@ -22,10 +54,6 @@ namespace LiveSplit.PaceAlert.Logic
             _settings = settings;
             _cancellationTokenSource = new CancellationTokenSource();
             
-            // TODO: This should be an instance variable but SendMessageFormatted needs to be static right now.
-            _deltaTimeFormatter = new DeltaTimeFormatter();
-            _timeFormatter = new RegularTimeFormatter();
-
             state.OnSplit += LiveSplitState_OnSplit;
             state.OnUndoSplit += LiveSplitState_OnUndoSplit;
             state.OnReset += LiveSplitState_OnReset;
@@ -53,25 +81,15 @@ namespace LiveSplit.PaceAlert.Logic
             {
                 if (_state.CurrentSplitIndex != notificationSettings.SelectedSplit + 1)
                     continue;
-
-                var pbDelta = LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit,
-                    "Personal Best", notificationSettings.TimingMethod);
-                var bestPossibleTime =
-                    LiveSplitStateHelper.GetLastDelta(_state, notificationSettings.SelectedSplit, "Best Segments",
-                        notificationSettings.TimingMethod) +
-                    _state.Run.Last().Comparisons["Best Segments"][notificationSettings.TimingMethod];
-
-                var deltaTarget = notificationSettings.Ahead
-                    ? notificationSettings.DeltaTarget.Negate()
-                    : notificationSettings.DeltaTarget;
+                
+                NotificationStats stats = new NotificationStats(_state, notificationSettings);
 
                 switch (notificationSettings.Type)
                 {
-                    case NotificationType.Time when _state.CurrentTime[notificationSettings.TimingMethod] < deltaTarget:
-                    case NotificationType.Delta when pbDelta < deltaTarget:
-                    case NotificationType.BestPossibleTime when bestPossibleTime < deltaTarget:
-                        SendMessageFormatted(_state, notificationSettings, pbDelta, bestPossibleTime,
-                            _state.Run[notificationSettings.SelectedSplit], _settings.MessageDelay, _cancellationTokenSource.Token);
+                    case NotificationType.Time when _state.CurrentTime[notificationSettings.TimingMethod] < stats.TargetTime:
+                    case NotificationType.Delta when stats.DeltaValue < stats.TargetTime:
+                    case NotificationType.BestPossibleTime when stats.BestPossibleTime < stats.TargetTime:
+                        SendMessageFormatted(stats, _settings.MessageDelay, _cancellationTokenSource.Token);
                         break;
                 }
             }
@@ -87,30 +105,51 @@ namespace LiveSplit.PaceAlert.Logic
             _cancellationTokenSource.Cancel();
         }
 
-        public static void SendMessageFormatted(LiveSplitState state, NotificationSettings notificationSettings,
-            TimeSpan? deltaValue, TimeSpan? bestPossibleTime, ISegment split, int delay, CancellationToken cancellationToken)
+        public struct NotificationStats
         {
-            // Matches all occurrences of text surrounded with "$(" and ")" and replaces it if it's a valid variable
-            var messageString = Regex.Replace(notificationSettings.MessageTemplate, @"\$\([^)]+\)", match =>
-            {
-                switch (match.Value)
-                {
-                    case "$(delta)":
-                        return _deltaTimeFormatter.Format(deltaValue);
-                    case "$(bpt)":
-                        return _timeFormatter.Format(bestPossibleTime);
-                    case "$(split)":
-                        return split.Name;
-                    case "$(time)":
-                        return _timeFormatter.Format(state.CurrentTime[notificationSettings.TimingMethod]);
-                    default:
-                        return match.Value;
-                }
-            });
+            public LiveSplitState State {get;}
+            public NotificationSettings Settings { get; }
+            
+            public TimeSpan TargetTime => Settings.Ahead ? Settings.DeltaTarget.Negate() : Settings.DeltaTarget;
 
-            if (messageString != string.Empty)
+            private TimeSpan? _deltaValue;
+            public TimeSpan? DeltaValue
             {
-                PaceBot.SendMessage(messageString, delay, cancellationToken);
+                get
+                {
+                    if (_deltaValue == null)
+                    {
+                        _deltaValue = LiveSplitStateHelper.GetLastDelta(State,
+                            Settings.SelectedSplit, "Personal Best", Settings.TimingMethod);
+                    }
+                    return _deltaValue;
+                }
+            }
+
+            private TimeSpan? _bestPossibleTime;
+            public TimeSpan? BestPossibleTime
+            {
+                get
+                {
+                    if (_bestPossibleTime == null)
+                    {
+                        _bestPossibleTime =
+                            LiveSplitStateHelper.GetLastDelta(State, Settings.SelectedSplit, "Best Segments",
+                                Settings.TimingMethod) +
+                            State.Run.Last().Comparisons["Best Segments"][Settings.TimingMethod];
+                    }
+                    return _bestPossibleTime;
+                }
+            }
+
+            public ISegment Split => State.Run[Settings.SelectedSplit];
+
+            public NotificationStats(LiveSplitState state, NotificationSettings settings)
+            {
+                State = state;
+                Settings = settings;
+                _deltaValue = null;
+                _bestPossibleTime = null;
             }
         }
     }

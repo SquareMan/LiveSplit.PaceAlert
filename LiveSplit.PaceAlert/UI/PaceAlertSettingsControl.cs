@@ -49,6 +49,7 @@ namespace LiveSplit.PaceAlert.UI
             var settingsElement = document.CreateElement("Settings");
             SettingsHelper.CreateSetting(document, settingsElement, "Version",
                 Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
+            SettingsHelper.CreateSetting(document, settingsElement, "Delay", _settings.MessageDelay);
 
             var splitsElement = document.CreateElement("RunFiles");
             settingsElement.AppendChild(splitsElement);
@@ -80,6 +81,9 @@ namespace LiveSplit.PaceAlert.UI
 
         public void SetSettings(XmlNode settingsNode)
         {
+            _settings.MessageDelay = SettingsHelper.ParseInt(settingsNode["Delay"], 2000);
+            txtDelay.Text = _settings.MessageDelay.ToString();
+            
             _settings.SettingsDictionary.Clear();
 
             var runNodes = settingsNode.SelectNodes(".//Run");
@@ -246,6 +250,18 @@ namespace LiveSplit.PaceAlert.UI
             var newSettings = new NotificationSettings();
             _activeSettingsList.Add(newSettings);
             AddNotificationControl(newSettings);
+        }
+
+        private void textBox1_Validating(object sender, CancelEventArgs e)
+        {
+            if (int.TryParse(txtDelay.Text, out var delay) && delay >= 0)
+            {
+                _settings.MessageDelay = delay;
+            }
+            else
+            {
+                txtDelay.Text = _settings.MessageDelay.ToString();
+            }
         }
     }
 }

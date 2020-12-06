@@ -22,6 +22,8 @@ namespace LiveSplit.PaceAlert.UI
             this.flpConditionList = new System.Windows.Forms.FlowLayoutPanel();
             this.btnAddNotification = new System.Windows.Forms.Button();
             this.btnVariables = new System.Windows.Forms.Button();
+            this.lblDelay = new System.Windows.Forms.Label();
+            this.txtDelay = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnSetURL
@@ -79,11 +81,35 @@ namespace LiveSplit.PaceAlert.UI
             this.btnVariables.UseVisualStyleBackColor = true;
             this.btnVariables.Click += new System.EventHandler(this.btnVariables_Click);
             // 
+            // lblDelay
+            // 
+            this.lblDelay.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblDelay.Location = new System.Drawing.Point(10, 158);
+            this.lblDelay.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.lblDelay.Name = "lblDelay";
+            this.lblDelay.Size = new System.Drawing.Size(122, 25);
+            this.lblDelay.TabIndex = 120;
+            this.lblDelay.Text = "Message Delay (ms):";
+            this.lblDelay.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtDelay
+            // 
+            this.txtDelay.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtDelay.Location = new System.Drawing.Point(138, 162);
+            this.txtDelay.Name = "txtDelay";
+            this.txtDelay.Size = new System.Drawing.Size(39, 20);
+            this.txtDelay.TabIndex = 121;
+            this.txtDelay.Text = "99999";
+            this.txtDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtDelay.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
+            // 
             // PaceAlertSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.txtDelay);
+            this.Controls.Add(this.lblDelay);
             this.Controls.Add(this.btnVariables);
             this.Controls.Add(this.btnAddNotification);
             this.Controls.Add(this.flpConditionList);
@@ -95,7 +121,12 @@ namespace LiveSplit.PaceAlert.UI
             this.Size = new System.Drawing.Size(450, 194);
             this.Load += new System.EventHandler(this.PaceAlertSettingsControl_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
         }
+
+        private System.Windows.Forms.TextBox txtDelay;
+
+        private System.Windows.Forms.Label lblDelay;
 
         private System.Windows.Forms.Button btnAddNotification;
         private System.Windows.Forms.Button btnSetURL;

@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Webhook;
 
@@ -32,6 +34,23 @@ namespace LiveSplit.PaceAlert.Discord
             return IsConnected;
         }
 
+        public static async void SendMessage(string text, int delay, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await Task.Delay(delay, cancellationToken);
+            }
+            catch (TaskCanceledException e)
+            {
+                return;
+            }
+
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                SendMessage(text);
+            }
+        }
+        
         public static async void SendMessage(string text)
         {
             try

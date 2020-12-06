@@ -98,7 +98,7 @@ namespace LiveSplit.PaceAlert.Logic
                     case "$(delta)":
                         return _deltaTimeFormatter.Format(deltaValue);
                     case "$(bpt)":
-                        return _deltaTimeFormatter.Format(bestPossibleTime);
+                        return _timeFormatter.Format(bestPossibleTime);
                     case "$(split)":
                         return split.Name;
                     case "$(time)":

@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update version="0.4.1">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> Fix formatting for Best Possible Time variable to not show a plus sign. </change>
+        </changelog>
+    </update>
     <update version="0.4.0">
         <files>
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>

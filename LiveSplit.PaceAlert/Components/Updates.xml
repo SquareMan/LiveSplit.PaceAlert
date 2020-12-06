@@ -1,5 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update version="0.4.0">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> Added Time Notification Type </change>
+            <change> Added Time and Best Possible Time variables</change>
+            <change> Added configureable delay before sending a message </change>
+            <change> Triggered messages will not be sent if a split is undone or the timer is reset before the message is sent. </change>
+        </changelog>
+    </update>
     <update version="0.3.0">
         <files>
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>

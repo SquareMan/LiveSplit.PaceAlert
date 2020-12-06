@@ -36,7 +36,7 @@ namespace LiveSplit.PaceAlert.Logic
             _state.OnSplit -= LiveSplitState_OnSplit;
             _state.OnUndoSplit -= LiveSplitState_OnUndoSplit;
             _state.OnReset -= LiveSplitState_OnReset;
-            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource.Dispose();
         }
 
         private void LiveSplitState_OnSplit(object sender, EventArgs e)

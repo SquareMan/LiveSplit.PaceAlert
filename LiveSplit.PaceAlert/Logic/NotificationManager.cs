@@ -14,6 +14,13 @@ namespace LiveSplit.PaceAlert.Logic
         private static ITimeFormatter _deltaTimeFormatter;
         private static ITimeFormatter _timeFormatter;
 
+        private static Dictionary<NotificationType, Func<NotificationStats,bool>> _notificationPredicates = new Dictionary<NotificationType, Func<NotificationStats, bool>>
+        {
+            {NotificationType.BestPossibleTime, stats => stats.BestPossibleTime < stats.TargetTime},
+            {NotificationType.Delta, stats => stats.DeltaValue < stats.TargetTime},
+            {NotificationType.Time, stats => stats.State.CurrentTime[stats.Settings.TimingMethod] < stats.TargetTime}
+        };
+        
         private static Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
         {
             {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
@@ -84,13 +91,9 @@ namespace LiveSplit.PaceAlert.Logic
                 
                 NotificationStats stats = new NotificationStats(_state, notificationSettings);
 
-                switch (notificationSettings.Type)
+                if (_notificationPredicates[notificationSettings.Type].Invoke(stats))
                 {
-                    case NotificationType.Time when _state.CurrentTime[notificationSettings.TimingMethod] < stats.TargetTime:
-                    case NotificationType.Delta when stats.DeltaValue < stats.TargetTime:
-                    case NotificationType.BestPossibleTime when stats.BestPossibleTime < stats.TargetTime:
-                        SendMessageFormatted(stats, _settings.MessageDelay, _cancellationTokenSource.Token);
-                        break;
+                    SendMessageFormatted(stats, _settings.MessageDelay, _cancellationTokenSource.Token);
                 }
             }
         }

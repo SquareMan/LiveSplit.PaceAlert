@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using LiveSplit.Model;
-using LiveSplit.PaceAlert.UI;
+using LiveSplit.PaceAlert.Logic;
 using LiveSplit.UI.Components;
 
 [assembly: ComponentFactory(typeof(PaceAlertFactory))]
 
-namespace LiveSplit.PaceAlert.UI
+namespace LiveSplit.PaceAlert.Logic
 {
     public class PaceAlertFactory : IComponentFactory
     {

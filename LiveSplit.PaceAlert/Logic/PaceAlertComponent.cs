@@ -3,11 +3,11 @@ using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Discord;
-using LiveSplit.PaceAlert.Logic;
+using LiveSplit.PaceAlert.UI;
 using LiveSplit.UI;
 using LiveSplit.UI.Components;
 
-namespace LiveSplit.PaceAlert.UI
+namespace LiveSplit.PaceAlert.Logic
 {
     public class PaceAlertComponent : LogicComponent
     {

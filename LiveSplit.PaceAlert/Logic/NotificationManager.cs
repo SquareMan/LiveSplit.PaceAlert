@@ -42,7 +42,7 @@ namespace LiveSplit.PaceAlert.Logic
             var messageString = Regex.Replace(stats.Settings.MessageTemplate, @"\$\([^)]+\)", match =>
             {
                 _variableFuncs.TryGetValue(match.Value, out var func);
-                return func != null ? func.Invoke(stats) : match.Value;
+                return func?.Invoke(stats) ?? match.Value;
             });
 
             if (messageString != string.Empty)

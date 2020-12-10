@@ -20,6 +20,7 @@ namespace LiveSplit.PaceAlert.UI
             this.btnSetURL = new System.Windows.Forms.Button();
             this.lblWebhookStatus = new System.Windows.Forms.Label();
             this.flpConditionList = new System.Windows.Forms.FlowLayoutPanel();
+            this.autocompleteBox = new System.Windows.Forms.ListBox();
             this.btnAddNotification = new System.Windows.Forms.Button();
             this.btnVariables = new System.Windows.Forms.Button();
             this.lblDelay = new System.Windows.Forms.Label();
@@ -56,6 +57,15 @@ namespace LiveSplit.PaceAlert.UI
             this.flpConditionList.Name = "flpConditionList";
             this.flpConditionList.Size = new System.Drawing.Size(430, 110);
             this.flpConditionList.TabIndex = 117;
+            // 
+            // autocompleteBox
+            // 
+            this.autocompleteBox.FormattingEnabled = true;
+            this.autocompleteBox.Location = new System.Drawing.Point(200, 10);
+            this.autocompleteBox.Name = "autocompleteBox";
+            this.autocompleteBox.Size = new System.Drawing.Size(100, 56);
+            this.autocompleteBox.TabIndex = 122;
+            this.autocompleteBox.Visible = false;
             // 
             // btnAddNotification
             // 
@@ -108,6 +118,7 @@ namespace LiveSplit.PaceAlert.UI
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.autocompleteBox);
             this.Controls.Add(this.txtDelay);
             this.Controls.Add(this.lblDelay);
             this.Controls.Add(this.btnVariables);
@@ -123,6 +134,8 @@ namespace LiveSplit.PaceAlert.UI
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ListBox autocompleteBox;
 
         private System.Windows.Forms.TextBox txtDelay;
 

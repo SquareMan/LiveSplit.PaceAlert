@@ -149,7 +149,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private void AddNotificationControl(NotificationSettings settings)
         {
-            var notificationControl = new NotificationSettingsControl(_state, splitNames);
+            var notificationControl = new NotificationSettingsControl(_state, splitNames, autocompleteBox);
             notificationControl.BindSettings(settings);
             flpConditionList.Controls.Add(notificationControl);
         }

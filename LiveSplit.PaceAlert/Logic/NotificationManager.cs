@@ -21,7 +21,7 @@ namespace LiveSplit.PaceAlert.Logic
             {NotificationType.Time, stats => stats.State.CurrentTime[stats.Settings.TimingMethod] < stats.TargetTime}
         };
         
-        private static Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
+        internal static Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
         {
             {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
             {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},

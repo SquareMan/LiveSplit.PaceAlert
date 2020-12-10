@@ -12,13 +12,15 @@ namespace LiveSplit.PaceAlert.UI
     {
         private readonly LiveSplitState _state;
 
-        public NotificationSettingsControl(LiveSplitState state, IEnumerable splitNames)
+        public NotificationSettingsControl(LiveSplitState state, IEnumerable splitNames, ListBox autocompleteBox)
         {
             InitializeComponent();
 
             _state = state;
             cboSelectedSplit.DataSource = splitNames;
             cboNotificationType.DataSource = Enum.GetValues(typeof(NotificationType));
+
+            txtMessage.ListBox = autocompleteBox;
         }
 
         public NotificationSettings BoundSettings { get; private set; }

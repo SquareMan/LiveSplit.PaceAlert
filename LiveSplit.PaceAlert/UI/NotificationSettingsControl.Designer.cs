@@ -37,7 +37,7 @@ namespace LiveSplit.PaceAlert.UI
             this.lblNotificationType = new System.Windows.Forms.Label();
             this.grpMessage = new System.Windows.Forms.GroupBox();
             this.btnRemove = new System.Windows.Forms.Button();
-            this.txtMessage = new System.Windows.Forms.TextBox();
+            this.txtMessage = new LiveSplit.PaceAlert.UI.MessageTextBox();
             this.btnSendMessage = new System.Windows.Forms.Button();
             this.grpCondition = new System.Windows.Forms.GroupBox();
             this.cboSelectedSplit = new System.Windows.Forms.ComboBox();
@@ -61,9 +61,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // grpNotificationCondition
             // 
-            this.grpNotificationCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpNotificationCondition.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.grpNotificationCondition.Controls.Add(this.cboNotificationType);
             this.grpNotificationCondition.Controls.Add(this.lblNotificationType);
             this.grpNotificationCondition.Controls.Add(this.grpMessage);
@@ -95,8 +93,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // grpMessage
             // 
-            this.grpMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpMessage.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.grpMessage.Controls.Add(this.btnRemove);
             this.grpMessage.Controls.Add(this.txtMessage);
             this.grpMessage.Controls.Add(this.btnSendMessage);
@@ -109,7 +106,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // btnRemove
             // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemove.Location = new System.Drawing.Point(145, 89);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(115, 26);
@@ -121,9 +118,8 @@ namespace LiveSplit.PaceAlert.UI
             // txtMessage
             // 
             this.txtMessage.AcceptsReturn = true;
-            this.txtMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMessage.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMessage.ListBox = null;
             this.txtMessage.Location = new System.Drawing.Point(6, 19);
             this.txtMessage.Multiline = true;
             this.txtMessage.Name = "txtMessage";
@@ -136,7 +132,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // btnSendMessage
             // 
-            this.btnSendMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSendMessage.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSendMessage.Location = new System.Drawing.Point(266, 89);
             this.btnSendMessage.Name = "btnSendMessage";
             this.btnSendMessage.Size = new System.Drawing.Size(146, 26);
@@ -147,8 +143,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // grpCondition
             // 
-            this.grpCondition.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpCondition.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.grpCondition.Controls.Add(this.cboSelectedSplit);
             this.grpCondition.Controls.Add(this.pnlComparison);
             this.grpCondition.Controls.Add(this.cboAheadBehind);
@@ -169,8 +164,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // cboSelectedSplit
             // 
-            this.cboSelectedSplit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cboSelectedSplit.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cboSelectedSplit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboSelectedSplit.Location = new System.Drawing.Point(6, 19);
             this.cboSelectedSplit.Name = "cboSelectedSplit";
@@ -180,7 +174,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // pnlComparison
             // 
-            this.pnlComparison.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlComparison.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlComparison.Controls.Add(this.rdoRealTime);
             this.pnlComparison.Controls.Add(this.rdoGameTime);
             this.pnlComparison.Location = new System.Drawing.Point(205, 43);
@@ -215,12 +209,10 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // cboAheadBehind
             // 
-            this.cboAheadBehind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cboAheadBehind.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cboAheadBehind.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboAheadBehind.FormattingEnabled = true;
-            this.cboAheadBehind.Items.AddRange(new object[] {
-            "-",
-            "+"});
+            this.cboAheadBehind.Items.AddRange(new object[] {"-", "+"});
             this.cboAheadBehind.Location = new System.Drawing.Point(229, 19);
             this.cboAheadBehind.Name = "cboAheadBehind";
             this.cboAheadBehind.Size = new System.Drawing.Size(32, 21);
@@ -229,7 +221,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // lblDeltaMillisecond
             // 
-            this.lblDeltaMillisecond.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDeltaMillisecond.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDeltaMillisecond.Location = new System.Drawing.Point(395, 18);
             this.lblDeltaMillisecond.Margin = new System.Windows.Forms.Padding(0);
             this.lblDeltaMillisecond.Name = "lblDeltaMillisecond";
@@ -240,7 +232,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // txtDeltaMinute
             // 
-            this.txtDeltaMinute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDeltaMinute.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDeltaMinute.Location = new System.Drawing.Point(300, 20);
             this.txtDeltaMinute.Name = "txtDeltaMinute";
             this.txtDeltaMinute.Size = new System.Drawing.Size(18, 20);
@@ -250,7 +242,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // txtDeltaMillisecond
             // 
-            this.txtDeltaMillisecond.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDeltaMillisecond.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDeltaMillisecond.Location = new System.Drawing.Point(368, 19);
             this.txtDeltaMillisecond.Name = "txtDeltaMillisecond";
             this.txtDeltaMillisecond.Size = new System.Drawing.Size(24, 20);
@@ -260,7 +252,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // lblDeltaSecond
             // 
-            this.lblDeltaSecond.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDeltaSecond.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDeltaSecond.Location = new System.Drawing.Point(355, 18);
             this.lblDeltaSecond.Margin = new System.Windows.Forms.Padding(0);
             this.lblDeltaSecond.Name = "lblDeltaSecond";
@@ -271,7 +263,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // txtDeltaSecond
             // 
-            this.txtDeltaSecond.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDeltaSecond.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDeltaSecond.Location = new System.Drawing.Point(334, 19);
             this.txtDeltaSecond.Name = "txtDeltaSecond";
             this.txtDeltaSecond.Size = new System.Drawing.Size(18, 20);
@@ -281,7 +273,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // txtDeltaHour
             // 
-            this.txtDeltaHour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDeltaHour.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDeltaHour.Location = new System.Drawing.Point(267, 20);
             this.txtDeltaHour.Name = "txtDeltaHour";
             this.txtDeltaHour.Size = new System.Drawing.Size(18, 20);
@@ -291,7 +283,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // lblDeltaHour
             // 
-            this.lblDeltaHour.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDeltaHour.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDeltaHour.Location = new System.Drawing.Point(288, 19);
             this.lblDeltaHour.Margin = new System.Windows.Forms.Padding(0);
             this.lblDeltaHour.Name = "lblDeltaHour";
@@ -302,7 +294,7 @@ namespace LiveSplit.PaceAlert.UI
             // 
             // lblDeltaMinute
             // 
-            this.lblDeltaMinute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblDeltaMinute.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDeltaMinute.Location = new System.Drawing.Point(321, 19);
             this.lblDeltaMinute.Margin = new System.Windows.Forms.Padding(0);
             this.lblDeltaMinute.Name = "lblDeltaMinute";
@@ -326,7 +318,6 @@ namespace LiveSplit.PaceAlert.UI
             this.grpCondition.PerformLayout();
             this.pnlComparison.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         private System.Windows.Forms.ComboBox cboNotificationType;
@@ -350,7 +341,7 @@ namespace LiveSplit.PaceAlert.UI
         private System.Windows.Forms.TextBox txtDeltaMillisecond;
         private System.Windows.Forms.TextBox txtDeltaMinute;
         private System.Windows.Forms.TextBox txtDeltaSecond;
-        private System.Windows.Forms.TextBox txtMessage;
+        private LiveSplit.PaceAlert.UI.MessageTextBox txtMessage;
 
         #endregion
     }

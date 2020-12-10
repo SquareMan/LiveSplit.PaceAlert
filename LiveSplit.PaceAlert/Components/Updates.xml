@@ -1,5 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update version="0.5.0">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> Added autocomplete for variables in notification message templates. </change>
+        </changelog>
+    </update>
     <update version="0.4.1">
         <files>
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>

@@ -6,6 +6,7 @@
         </files>
         <changelog>
             <change> Added autocomplete for variables in notification message templates. </change>
+            <change> Added ability to attach a screenshot of LiveSplit to notifications. </change>
         </changelog>
     </update>
     <update version="0.4.1">

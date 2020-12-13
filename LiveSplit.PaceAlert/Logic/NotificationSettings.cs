@@ -11,6 +11,7 @@ namespace LiveSplit.PaceAlert.Logic
         public int SelectedSplit;
         public TimingMethod TimingMethod;
         public NotificationType Type;
+        public bool TakeScreenshot;
 
         public NotificationSettings()
         {
@@ -20,6 +21,7 @@ namespace LiveSplit.PaceAlert.Logic
             SelectedSplit = -1;
             TimingMethod = TimingMethod.RealTime;
             Type = NotificationType.Delta;
+            TakeScreenshot = false;
         }
     }
 }

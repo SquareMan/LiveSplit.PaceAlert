@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LiveSplit.Model;
@@ -13,6 +15,7 @@ namespace LiveSplit.PaceAlert.Logic
     {
         private static ITimeFormatter _deltaTimeFormatter;
         private static ITimeFormatter _timeFormatter;
+        private static event EventHandler OnNextUpdate;
 
         private static Dictionary<NotificationType, Func<NotificationStats,bool>> _notificationPredicates = new Dictionary<NotificationType, Func<NotificationStats, bool>>
         {
@@ -47,8 +50,29 @@ namespace LiveSplit.PaceAlert.Logic
 
             if (messageString != string.Empty)
             {
-                PaceBot.SendMessage(messageString, delay, cancellationToken);
+                OnNextUpdate += (sender, args) =>
+                {
+                    string path = null;
+                    if (stats.Settings.TakeScreenshot)
+                    {
+                        var screenshot = MakeScreenShot(stats.State);
+                        path = "tmp.png";
+                        screenshot?.Save(path);
+                    }
+
+                    PaceBot.SendMessage(messageString, path, delay, cancellationToken);
+                };
             }
+        }
+
+        private static Image MakeScreenShot(LiveSplitState state, bool transparent = false)
+        {
+            // TODO: Probably reimplement this MakeScreenShot function instead of using reflection.
+            var timerForm = state.Form;
+            Image m = timerForm.GetType()
+                .GetMethod("MakeScreenShot", BindingFlags.NonPublic | BindingFlags.Instance)?
+                .Invoke(timerForm, new object[] {false}) as Image;
+            return m;
         }
 
         private readonly ComponentSettings _settings;
@@ -72,6 +96,13 @@ namespace LiveSplit.PaceAlert.Logic
             _state.OnUndoSplit -= LiveSplitState_OnUndoSplit;
             _state.OnReset -= LiveSplitState_OnReset;
             _cancellationTokenSource.Dispose();
+        }
+
+        public void Update()
+        {
+            // TODO: Really starting to abuse static members here, fix before 1.0! (Maybe singleton pattern?)
+            OnNextUpdate?.Invoke(this, null);
+            OnNextUpdate = null;
         }
 
         private void LiveSplitState_OnSplit(object sender, EventArgs e)

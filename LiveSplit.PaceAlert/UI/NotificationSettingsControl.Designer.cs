@@ -33,6 +33,7 @@ namespace LiveSplit.PaceAlert.UI
         private void InitializeComponent()
         {
             this.grpNotificationCondition = new System.Windows.Forms.GroupBox();
+            this.chkTakeScreenshot = new System.Windows.Forms.CheckBox();
             this.cboNotificationType = new System.Windows.Forms.ComboBox();
             this.lblNotificationType = new System.Windows.Forms.Label();
             this.grpMessage = new System.Windows.Forms.GroupBox();
@@ -62,6 +63,7 @@ namespace LiveSplit.PaceAlert.UI
             // grpNotificationCondition
             // 
             this.grpNotificationCondition.Anchor = ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpNotificationCondition.Controls.Add(this.chkTakeScreenshot);
             this.grpNotificationCondition.Controls.Add(this.cboNotificationType);
             this.grpNotificationCondition.Controls.Add(this.lblNotificationType);
             this.grpNotificationCondition.Controls.Add(this.grpMessage);
@@ -72,6 +74,16 @@ namespace LiveSplit.PaceAlert.UI
             this.grpNotificationCondition.TabIndex = 116;
             this.grpNotificationCondition.TabStop = false;
             this.grpNotificationCondition.Text = "Notification Settings";
+            // 
+            // chkTakeScreenshot
+            // 
+            this.chkTakeScreenshot.Location = new System.Drawing.Point(272, 18);
+            this.chkTakeScreenshot.Name = "chkTakeScreenshot";
+            this.chkTakeScreenshot.Size = new System.Drawing.Size(130, 16);
+            this.chkTakeScreenshot.TabIndex = 120;
+            this.chkTakeScreenshot.Text = "Take Screenshot";
+            this.chkTakeScreenshot.UseVisualStyleBackColor = true;
+            this.chkTakeScreenshot.CheckedChanged += new System.EventHandler(this.chkTakeScreenshot_CheckedChanged);
             // 
             // cboNotificationType
             // 
@@ -319,6 +331,8 @@ namespace LiveSplit.PaceAlert.UI
             this.pnlComparison.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.CheckBox chkTakeScreenshot;
 
         private System.Windows.Forms.ComboBox cboNotificationType;
         private System.Windows.Forms.Label lblNotificationType;

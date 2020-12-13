@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Webhook;
+using LiveSplit.PaceAlert.UI;
 
 namespace LiveSplit.PaceAlert.Discord
 {
@@ -36,6 +38,11 @@ namespace LiveSplit.PaceAlert.Discord
 
         public static async void SendMessage(string text, int delay, CancellationToken cancellationToken)
         {
+            SendMessage(text, null, delay, cancellationToken);
+        }
+        
+        public static async void SendMessage(string text, string filepath, int delay, CancellationToken cancellationToken)
+        {
             try
             {
                 await Task.Delay(delay, cancellationToken);
@@ -47,15 +54,22 @@ namespace LiveSplit.PaceAlert.Discord
 
             if (!cancellationToken.IsCancellationRequested)
             {
-                SendMessage(text);
+                SendMessage(text, filepath);
             }
         }
-        
-        public static async void SendMessage(string text)
+
+        public static async void SendMessage(string text, string filepath)
         {
             try
             {
-                await _client.SendMessageAsync(text);
+                if (string.IsNullOrEmpty(filepath))
+                {
+                    await _client.SendMessageAsync(text);
+                }
+                else
+                {
+                    await _client.SendFileAsync(filepath, text);
+                }
             }
             catch
             {

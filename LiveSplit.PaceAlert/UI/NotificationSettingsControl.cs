@@ -33,6 +33,7 @@ namespace LiveSplit.PaceAlert.UI
             cboSelectedSplit.SelectedIndex = settings.SelectedSplit;
             cboAheadBehind.SelectedIndex = settings.Ahead ? 0 : 1;
             txtMessage.Text = settings.MessageTemplate;
+            chkTakeScreenshot.Checked = settings.TakeScreenshot;
 
             // Set individual time text boxes, using TotalHours to account for TimeSpans with 24 or more hours
             txtDeltaHour.Text = ((int) settings.DeltaTarget.TotalHours).ToString("D2");
@@ -151,6 +152,11 @@ namespace LiveSplit.PaceAlert.UI
         private void cboNotificationType_SelectionChangeCommitted(object sender, EventArgs e)
         {
             BoundSettings.Type = (NotificationType) cboNotificationType.SelectedIndex;
+        }
+
+        private void chkTakeScreenshot_CheckedChanged(object sender, EventArgs e)
+        {
+            BoundSettings.TakeScreenshot = chkTakeScreenshot.Checked;
         }
     }
 }

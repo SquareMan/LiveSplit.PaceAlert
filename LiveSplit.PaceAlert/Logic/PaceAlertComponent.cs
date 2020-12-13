@@ -55,6 +55,7 @@ namespace LiveSplit.PaceAlert.Logic
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height,
             LayoutMode mode)
         {
+            _notificationManager.Update();
         }
 
         public override Control GetSettingsControl(LayoutMode mode)

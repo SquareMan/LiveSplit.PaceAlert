@@ -73,6 +73,7 @@ namespace LiveSplit.PaceAlert.UI
                     SettingsHelper.CreateSetting(document, settingElement, "Ahead", setting.Ahead);
                     SettingsHelper.CreateSetting(document, settingElement, "Comparison", setting.TimingMethod);
                     SettingsHelper.CreateSetting(document, settingElement, "MessageTemplate", setting.MessageTemplate);
+                    SettingsHelper.CreateSetting(document, settingElement, "TakeScreenshot", setting.TakeScreenshot);
                 }
             }
 
@@ -112,7 +113,8 @@ namespace LiveSplit.PaceAlert.UI
                             TimingMethod =
                                 SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
                             MessageTemplate =
-                                SettingsHelper.ParseString(notificationNode["MessageTemplate"], string.Empty)
+                                SettingsHelper.ParseString(notificationNode["MessageTemplate"], string.Empty),
+                            TakeScreenshot = SettingsHelper.ParseBool(notificationNode["TakeScreenshot"])
                         };
 
                         notificationSettingsList.Add(notificationSettings);
@@ -127,7 +129,7 @@ namespace LiveSplit.PaceAlert.UI
             if (_state.Run.FilePath == null)
                 // No split file is opened.
                 return;
-
+            
             //Set form settings to settings associated with currently opened splits file.
             var settingsExist = _settings.SettingsDictionary.TryGetValue(_state.Run.FilePath, out _activeSettingsList);
             if (!settingsExist)

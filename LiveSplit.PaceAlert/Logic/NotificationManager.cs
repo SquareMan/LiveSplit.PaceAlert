@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LiveSplit.Model;
@@ -57,7 +56,7 @@ namespace LiveSplit.PaceAlert.Logic
                     {
                         var screenshot = MakeScreenShot(stats.State);
                         path = "tmp.png";
-                        screenshot?.Save(path);
+                        screenshot.Save(path);
                     }
 
                     PaceBot.SendMessage(messageString, path, delay, cancellationToken);
@@ -65,14 +64,12 @@ namespace LiveSplit.PaceAlert.Logic
             }
         }
 
-        private static Image MakeScreenShot(LiveSplitState state, bool transparent = false)
+        private static Image MakeScreenShot(LiveSplitState state)
         {
-            // TODO: Probably reimplement this MakeScreenShot function instead of using reflection.
             var timerForm = state.Form;
-            Image m = timerForm.GetType()
-                .GetMethod("MakeScreenShot", BindingFlags.NonPublic | BindingFlags.Instance)?
-                .Invoke(timerForm, new object[] {false}) as Image;
-            return m;
+            var image = new Bitmap(timerForm.Width, timerForm.Height);
+            timerForm.DrawToBitmap(image, new Rectangle(0, 0, timerForm.Width, timerForm.Height));
+            return image;
         }
 
         private readonly ComponentSettings _settings;

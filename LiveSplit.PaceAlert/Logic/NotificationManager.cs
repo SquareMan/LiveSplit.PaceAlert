@@ -16,14 +16,14 @@ namespace LiveSplit.PaceAlert.Logic
         private static ITimeFormatter _timeFormatter;
         private static event EventHandler OnNextUpdate;
 
-        private static Dictionary<NotificationType, Func<NotificationStats,bool>> _notificationPredicates = new Dictionary<NotificationType, Func<NotificationStats, bool>>
+        private static readonly Dictionary<NotificationType, Func<NotificationStats,bool>> _notificationPredicates = new Dictionary<NotificationType, Func<NotificationStats, bool>>
         {
             {NotificationType.BestPossibleTime, stats => stats.BestPossibleTime < stats.TargetTime},
             {NotificationType.Delta, stats => stats.DeltaValue < stats.TargetTime},
             {NotificationType.Time, stats => stats.State.CurrentTime[stats.Settings.TimingMethod] < stats.TargetTime}
         };
         
-        internal static Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
+        internal static readonly Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
         {
             {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
             {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},

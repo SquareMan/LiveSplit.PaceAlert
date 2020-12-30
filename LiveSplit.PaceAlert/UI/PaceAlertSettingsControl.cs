@@ -70,7 +70,6 @@ namespace LiveSplit.PaceAlert.UI
                     SettingsHelper.CreateSetting(document, settingElement, "Type", setting.Type);
                     SettingsHelper.CreateSetting(document, settingElement, "SelectedSplit", setting.SelectedSplit);
                     SettingsHelper.CreateSetting(document, settingElement, "DeltaTarget", setting.DeltaTarget);
-                    SettingsHelper.CreateSetting(document, settingElement, "Ahead", setting.Ahead);
                     SettingsHelper.CreateSetting(document, settingElement, "Comparison", setting.TimingMethod);
                     SettingsHelper.CreateSetting(document, settingElement, "MessageTemplate", setting.MessageTemplate);
                     SettingsHelper.CreateSetting(document, settingElement, "TakeScreenshot", setting.TakeScreenshot);
@@ -82,6 +81,7 @@ namespace LiveSplit.PaceAlert.UI
 
         public void SetSettings(XmlNode settingsNode)
         {
+            var version = SettingsHelper.ParseVersion(settingsNode["Version"]);
             _settings.MessageDelay = SettingsHelper.ParseInt(settingsNode["Delay"], 2000);
             txtDelay.Text = _settings.MessageDelay.ToString();
             
@@ -104,12 +104,16 @@ namespace LiveSplit.PaceAlert.UI
 
                     foreach (XmlNode notificationNode in notificationNodes)
                     {
+                        var timeSpan =
+                            version <= new Version(0, 5, 0) && SettingsHelper.ParseBool(notificationNode["Ahead"], true)
+                                ? SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero).Negate()
+                                : SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero);
+                        
                         var notificationSettings = new NotificationSettings
                         {
                             Type = SettingsHelper.ParseEnum(notificationNode["Type"], NotificationType.Delta),
                             SelectedSplit = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1),
-                            DeltaTarget = SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero),
-                            Ahead = SettingsHelper.ParseBool(notificationNode["Ahead"], true),
+                            DeltaTarget = timeSpan,
                             TimingMethod =
                                 SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
                             MessageTemplate =

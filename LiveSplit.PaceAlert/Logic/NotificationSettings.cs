@@ -5,7 +5,6 @@ namespace LiveSplit.PaceAlert.Logic
 {
     public class NotificationSettings
     {
-        public bool Ahead;
         public TimeSpan DeltaTarget;
         public string MessageTemplate;
         public int SelectedSplit;
@@ -15,7 +14,6 @@ namespace LiveSplit.PaceAlert.Logic
 
         public NotificationSettings()
         {
-            Ahead = true;
             DeltaTarget = TimeSpan.Zero;
             MessageTemplate = string.Empty;
             SelectedSplit = -1;

@@ -5,11 +5,19 @@ using System.Threading;
 using System.Windows.Forms;
 using LiveSplit.Model;
 using LiveSplit.PaceAlert.Logic;
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.PaceAlert.UI
 {
     internal partial class NotificationSettingsControl : UserControl
     {
+        private static readonly ITimeFormatter _timeFormatter;
+
+        static NotificationSettingsControl()
+        {
+            _timeFormatter = new ShortTimeFormatter();
+        }
+        
         private readonly LiveSplitState _state;
 
         public NotificationSettingsControl(LiveSplitState state, IEnumerable splitNames, ListBox autocompleteBox)
@@ -31,15 +39,9 @@ namespace LiveSplit.PaceAlert.UI
 
             cboNotificationType.SelectedIndex = (int) settings.Type;
             cboSelectedSplit.SelectedIndex = settings.SelectedSplit;
-            cboAheadBehind.SelectedIndex = settings.Ahead ? 0 : 1;
             txtMessage.Text = settings.MessageTemplate;
             chkTakeScreenshot.Checked = settings.TakeScreenshot;
-
-            // Set individual time text boxes, using TotalHours to account for TimeSpans with 24 or more hours
-            txtDeltaHour.Text = ((int) settings.DeltaTarget.TotalHours).ToString("D2");
-            txtDeltaMinute.Text = settings.DeltaTarget.Minutes.ToString("D2");
-            txtDeltaSecond.Text = settings.DeltaTarget.Seconds.ToString("D2");
-            txtDeltaMillisecond.Text = settings.DeltaTarget.Milliseconds.ToString("D3");
+            txtTimeSpan.Text = _timeFormatter.Format(settings.DeltaTarget);
 
             // Parse Settings for Timing Method Comparison
             switch (settings.TimingMethod)
@@ -65,78 +67,26 @@ namespace LiveSplit.PaceAlert.UI
             settingsControl?.RemoveNotificationControl(this);
         }
 
-        private void txtDeltaHour_Validating(object sender, CancelEventArgs e)
+        private void txtTimeSpan_Validating(object sender, CancelEventArgs e)
         {
-            if (int.TryParse(txtDeltaHour.Text, out var newTime) && newTime >= 0)
+            TimeSpan parsedTimeSpan;
+            
+            try
             {
-                txtDeltaHour.Text = newTime.ToString("D2");
+                parsedTimeSpan = TimeSpanParser.Parse(txtTimeSpan.Text);
+                BoundSettings.DeltaTarget = parsedTimeSpan;
+            }
+            catch
+            {
+                parsedTimeSpan = BoundSettings.DeltaTarget;
+            }
 
-                var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget =
-                    new TimeSpan(0, newTime, oldTime.Minutes, oldTime.Seconds, oldTime.Milliseconds);
-            }
-            else
-            {
-                txtDeltaHour.Text = ((int) BoundSettings.DeltaTarget.TotalHours).ToString("D2");
-            }
-        }
-
-        private void txtDeltaMinute_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaMinute.Text, out var newTime) && newTime >= 0 && newTime < 60)
-            {
-                txtDeltaMinute.Text = newTime.ToString("D2");
-
-                var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, newTime, oldTime.Seconds,
-                    oldTime.Milliseconds);
-            }
-            else
-            {
-                txtDeltaMinute.Text = BoundSettings.DeltaTarget.Minutes.ToString("D2");
-            }
-        }
-
-        private void txtDeltaSecond_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaSecond.Text, out var newTime) && newTime >= 0 && newTime < 60)
-            {
-                txtDeltaSecond.Text = newTime.ToString("D2");
-
-                var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget = new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, newTime,
-                    oldTime.Milliseconds);
-            }
-            else
-            {
-                txtDeltaSecond.Text = BoundSettings.DeltaTarget.Seconds.ToString("D2");
-            }
-        }
-
-        private void txtDeltaMillisecond_Validating(object sender, CancelEventArgs e)
-        {
-            if (int.TryParse(txtDeltaMillisecond.Text, out var newTime) && newTime >= 0 && newTime < 1000)
-            {
-                txtDeltaMillisecond.Text = newTime.ToString("D3");
-
-                var oldTime = BoundSettings.DeltaTarget;
-                BoundSettings.DeltaTarget =
-                    new TimeSpan(oldTime.Days, oldTime.Hours, oldTime.Minutes, oldTime.Seconds, newTime);
-            }
-            else
-            {
-                txtDeltaMillisecond.Text = BoundSettings.DeltaTarget.Milliseconds.ToString("D3");
-            }
+            txtTimeSpan.Text = _timeFormatter.Format(parsedTimeSpan);
         }
 
         private void cboSelectedSplit_SelectionChangeCommitted(object sender, EventArgs e)
         {
             BoundSettings.SelectedSplit = cboSelectedSplit.SelectedIndex;
-        }
-
-        private void cboAheadBehind_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            BoundSettings.Ahead = cboAheadBehind.SelectedIndex == 0;
         }
 
         private void rdoRealTime_CheckedChanged(object sender, EventArgs e)

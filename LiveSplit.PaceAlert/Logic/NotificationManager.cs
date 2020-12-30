@@ -12,8 +12,8 @@ namespace LiveSplit.PaceAlert.Logic
 {
     public class NotificationManager : IDisposable
     {
-        private static ITimeFormatter _deltaTimeFormatter;
-        private static ITimeFormatter _timeFormatter;
+        private static readonly ITimeFormatter _deltaTimeFormatter;
+        private static readonly ITimeFormatter _timeFormatter;
         private static event EventHandler OnNextUpdate;
 
         private static readonly Dictionary<NotificationType, Func<NotificationStats,bool>> _notificationPredicates = new Dictionary<NotificationType, Func<NotificationStats, bool>>
@@ -33,7 +33,6 @@ namespace LiveSplit.PaceAlert.Logic
 
         static NotificationManager()
         {
-            // TODO: This should be an instance variable but SendMessageFormatted needs to be static right now.
             _deltaTimeFormatter = new DeltaTimeFormatter();
             _timeFormatter = new RegularTimeFormatter();
         }
@@ -141,7 +140,7 @@ namespace LiveSplit.PaceAlert.Logic
             public LiveSplitState State {get;}
             public NotificationSettings Settings { get; }
             
-            public TimeSpan TargetTime => Settings.Ahead ? Settings.DeltaTarget.Negate() : Settings.DeltaTarget;
+            public TimeSpan TargetTime => Settings.DeltaTarget;
 
             private TimeSpan? _deltaValue;
             public TimeSpan? DeltaValue

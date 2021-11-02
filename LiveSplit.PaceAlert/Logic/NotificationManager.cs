@@ -27,7 +27,7 @@ namespace LiveSplit.PaceAlert.Logic
         {
             {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
             {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},
-            {"$(split)", stats => stats.Split.Name},
+            {"$(split)", stats => stats.Settings.SelectedSegment.Name},
             {"$(time)", stats => _timeFormatter.Format(stats.State.CurrentTime[stats.Settings.TimingMethod])}
         };
 
@@ -113,7 +113,7 @@ namespace LiveSplit.PaceAlert.Logic
 
             foreach (var notificationSettings in activeSettingsList)
             {
-                if (_state.CurrentSplitIndex != notificationSettings.SelectedSplit + 1)
+                if (_state.CurrentSplitIndex != _state.Run.IndexOf(notificationSettings.SelectedSegment) + 1)
                     continue;
                 
                 NotificationStats stats = new NotificationStats(_state, notificationSettings);
@@ -150,7 +150,7 @@ namespace LiveSplit.PaceAlert.Logic
                     if (_deltaValue == null)
                     {
                         _deltaValue = LiveSplitStateHelper.GetLastDelta(State,
-                            Settings.SelectedSplit, "Personal Best", Settings.TimingMethod);
+                            State.Run.IndexOf(Settings.SelectedSegment), "Personal Best", Settings.TimingMethod);
                     }
                     return _deltaValue;
                 }
@@ -164,15 +164,13 @@ namespace LiveSplit.PaceAlert.Logic
                     if (_bestPossibleTime == null)
                     {
                         _bestPossibleTime =
-                            LiveSplitStateHelper.GetLastDelta(State, Settings.SelectedSplit, "Best Segments",
+                            LiveSplitStateHelper.GetLastDelta(State, State.Run.IndexOf(Settings.SelectedSegment), "Best Segments",
                                 Settings.TimingMethod) +
                             State.Run.Last().Comparisons["Best Segments"][Settings.TimingMethod];
                     }
                     return _bestPossibleTime;
                 }
             }
-
-            public ISegment Split => State.Run[Settings.SelectedSplit];
 
             public NotificationStats(LiveSplitState state, NotificationSettings settings)
             {

@@ -68,7 +68,10 @@ namespace LiveSplit.PaceAlert.UI
                     runElement.AppendChild(settingElement);
 
                     SettingsHelper.CreateSetting(document, settingElement, "Type", setting.Type);
-                    SettingsHelper.CreateSetting(document, settingElement, "SelectedSplit", setting.SelectedSplit);
+                    SettingsHelper.CreateSetting(document, settingElement, "SelectedSplit",
+                        _state.Run.FilePath == runSettingsKvp.Key
+                            ? _state.Run.IndexOf(setting.SelectedSegment)
+                            : setting.SelectedSplitIndex);
                     SettingsHelper.CreateSetting(document, settingElement, "DeltaTarget", setting.DeltaTarget);
                     SettingsHelper.CreateSetting(document, settingElement, "Comparison", setting.TimingMethod);
                     SettingsHelper.CreateSetting(document, settingElement, "MessageTemplate", setting.MessageTemplate);
@@ -108,11 +111,17 @@ namespace LiveSplit.PaceAlert.UI
                             version <= new Version(0, 5, 0) && SettingsHelper.ParseBool(notificationNode["Ahead"], true)
                                 ? SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero).Negate()
                                 : SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero);
+
+                        var splitIndex = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1);
+                        var selectedSegment = _state.Run.FilePath == filePath 
+                            ? _state.Run[splitIndex] 
+                            : null;
                         
                         var notificationSettings = new NotificationSettings
                         {
                             Type = SettingsHelper.ParseEnum(notificationNode["Type"], NotificationType.Delta),
-                            SelectedSplit = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1),
+                            SelectedSplitIndex = splitIndex,
+                            SelectedSegment = selectedSegment,
                             DeltaTarget = timeSpan,
                             TimingMethod =
                                 SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
@@ -187,6 +196,11 @@ namespace LiveSplit.PaceAlert.UI
             var newActiveSettings = _settings.GetActiveSettings(_state);
             if (newActiveSettings != _activeSettingsList)
             {
+                // Get segment for each saved segment index
+                foreach (var setting in newActiveSettings)
+                {
+                    setting.SelectedSegment = _state.Run[setting.SelectedSplitIndex];
+                }
                 BuildSplitNames();
                 SetActiveSettings();
                 return;

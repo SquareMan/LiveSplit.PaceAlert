@@ -38,7 +38,7 @@ namespace LiveSplit.PaceAlert.UI
             BoundSettings = settings;
 
             cboNotificationType.SelectedIndex = (int) settings.Type;
-            cboSelectedSplit.SelectedIndex = settings.SelectedSplit;
+            cboSelectedSplit.SelectedItem = settings.SelectedSegment.Name;
             txtMessage.Text = settings.MessageTemplate;
             chkTakeScreenshot.Checked = settings.TakeScreenshot;
             txtTimeSpan.Text = _timeFormatter.Format(settings.DeltaTarget);
@@ -86,7 +86,7 @@ namespace LiveSplit.PaceAlert.UI
 
         private void cboSelectedSplit_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            BoundSettings.SelectedSplit = cboSelectedSplit.SelectedIndex;
+            BoundSettings.SelectedSegment = _state.Run[cboSelectedSplit.SelectedIndex];
         }
 
         private void rdoRealTime_CheckedChanged(object sender, EventArgs e)

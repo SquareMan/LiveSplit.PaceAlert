@@ -7,16 +7,18 @@ namespace LiveSplit.PaceAlert.Logic
     {
         public TimeSpan DeltaTarget;
         public string MessageTemplate;
-        public int SelectedSplit;
+        // Used for serialization only, required since settings for every file must be loaded to ensure they aren't lost
+        public int SelectedSplitIndex;
         public TimingMethod TimingMethod;
         public NotificationType Type;
         public bool TakeScreenshot;
+        public ISegment SelectedSegment;
 
         public NotificationSettings()
         {
             DeltaTarget = TimeSpan.Zero;
             MessageTemplate = string.Empty;
-            SelectedSplit = -1;
+            SelectedSplitIndex = -1;
             TimingMethod = TimingMethod.RealTime;
             Type = NotificationType.Delta;
             TakeScreenshot = false;

@@ -48,10 +48,10 @@ namespace LiveSplit.PaceAlert.UI
         private void DoAutocomplete()
         {
             // Find how much of the selected variable needs to be appended
-            if(!(ListBox.SelectedItem is string selectedItem)) return;
+            if (!(ListBox.SelectedItem is string selectedItem)) return;
             var startIndex = Text.LastIndexOf('$', Math.Max(SelectionStart - 1, 0));
             var remainingText = selectedItem.Substring(SelectionStart - startIndex);
-            
+
             // Insert the remaining text into the appropriate place in the Text
             var stringBuilder = new StringBuilder(Text, MaxLength);
             stringBuilder.Insert(SelectionStart, remainingText);
@@ -68,16 +68,16 @@ namespace LiveSplit.PaceAlert.UI
         private void MessageTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (ListBox == null) return;
-            if (e.KeyCode == Keys.D9 && e.Shift && SelectionStart > 0 && Text[SelectionStart-1] == '$') ShowListBox();
+            if (e.KeyCode == Keys.D9 && e.Shift && SelectionStart > 0 && Text[SelectionStart - 1] == '$') ShowListBox();
             if (!ListBox.Visible) return;
-            
+
             switch (e.KeyCode)
             {
                 case Keys.Up when ListBox.SelectedIndex > 0:
                     ListBox.SelectedIndex -= 1;
                     e.SuppressKeyPress = true;
                     break;
-                case Keys.Down when ListBox.SelectedIndex < ListBox.Items.Count-1:
+                case Keys.Down when ListBox.SelectedIndex < ListBox.Items.Count - 1:
                     ListBox.SelectedIndex += 1;
                     e.SuppressKeyPress = true;
                     break;
@@ -106,8 +106,8 @@ namespace LiveSplit.PaceAlert.UI
             // Find what the user has already entered to determine which options to display
             var startIndex = Text.LastIndexOf('$', Math.Max(SelectionStart - 1, 0));
             if (startIndex < 0) return;
-            var substring = Text.Substring(startIndex,SelectionStart - startIndex) + e.KeyChar;
-            
+            var substring = Text.Substring(startIndex, SelectionStart - startIndex) + e.KeyChar;
+
             // Find which variables begin with the user's current input
             ListBox.DataSource = NotificationManager._variableFuncs.Keys.Where(k => k.StartsWith(substring)).ToArray();
             if (ListBox.Items.Count == 0) ListBox.Hide();

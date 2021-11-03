@@ -16,20 +16,25 @@ namespace LiveSplit.PaceAlert.Logic
         private static readonly ITimeFormatter _timeFormatter;
         private static event EventHandler OnNextUpdate;
 
-        private static readonly Dictionary<NotificationType, Func<NotificationStats,bool>> _notificationPredicates = new Dictionary<NotificationType, Func<NotificationStats, bool>>
-        {
-            {NotificationType.BestPossibleTime, stats => stats.BestPossibleTime < stats.TargetTime},
-            {NotificationType.Delta, stats => stats.DeltaValue < stats.TargetTime},
-            {NotificationType.Time, stats => stats.State.CurrentTime[stats.Settings.TimingMethod] < stats.TargetTime}
-        };
-        
-        internal static readonly Dictionary<string,Func<NotificationStats,string>> _variableFuncs = new Dictionary<string, Func<NotificationStats,string>>
-        {
-            {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
-            {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},
-            {"$(split)", stats => stats.Settings.SelectedSegment.Name},
-            {"$(time)", stats => _timeFormatter.Format(stats.State.CurrentTime[stats.Settings.TimingMethod])}
-        };
+        private static readonly Dictionary<NotificationType, Func<NotificationStats, bool>> _notificationPredicates =
+            new Dictionary<NotificationType, Func<NotificationStats, bool>>
+            {
+                {NotificationType.BestPossibleTime, stats => stats.BestPossibleTime < stats.TargetTime},
+                {NotificationType.Delta, stats => stats.DeltaValue < stats.TargetTime},
+                {
+                    NotificationType.Time,
+                    stats => stats.State.CurrentTime[stats.Settings.TimingMethod] < stats.TargetTime
+                }
+            };
+
+        internal static readonly Dictionary<string, Func<NotificationStats, string>> _variableFuncs =
+            new Dictionary<string, Func<NotificationStats, string>>
+            {
+                {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
+                {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},
+                {"$(split)", stats => stats.Settings.SelectedSegment.Name},
+                {"$(time)", stats => _timeFormatter.Format(stats.State.CurrentTime[stats.Settings.TimingMethod])}
+            };
 
         static NotificationManager()
         {
@@ -80,7 +85,7 @@ namespace LiveSplit.PaceAlert.Logic
             _state = state;
             _settings = settings;
             _cancellationTokenSource = new CancellationTokenSource();
-            
+
             state.OnSplit += LiveSplitState_OnSplit;
             state.OnUndoSplit += LiveSplitState_OnUndoSplit;
             state.OnReset += LiveSplitState_OnReset;
@@ -108,14 +113,14 @@ namespace LiveSplit.PaceAlert.Logic
                 _cancellationTokenSource.Dispose();
                 _cancellationTokenSource = new CancellationTokenSource();
             }
-            
+
             var activeSettingsList = _settings.GetActiveSettings(_state);
 
             foreach (var notificationSettings in activeSettingsList)
             {
                 if (_state.CurrentSplitIndex != _state.Run.IndexOf(notificationSettings.SelectedSegment) + 1)
                     continue;
-                
+
                 NotificationStats stats = new NotificationStats(_state, notificationSettings);
 
                 if (_notificationPredicates[notificationSettings.Type].Invoke(stats))
@@ -137,12 +142,13 @@ namespace LiveSplit.PaceAlert.Logic
 
         public struct NotificationStats
         {
-            public LiveSplitState State {get;}
+            public LiveSplitState State { get; }
             public NotificationSettings Settings { get; }
-            
+
             public TimeSpan TargetTime => Settings.DeltaTarget;
 
             private TimeSpan? _deltaValue;
+
             public TimeSpan? DeltaValue
             {
                 get
@@ -152,11 +158,13 @@ namespace LiveSplit.PaceAlert.Logic
                         _deltaValue = LiveSplitStateHelper.GetLastDelta(State,
                             State.Run.IndexOf(Settings.SelectedSegment), "Personal Best", Settings.TimingMethod);
                     }
+
                     return _deltaValue;
                 }
             }
 
             private TimeSpan? _bestPossibleTime;
+
             public TimeSpan? BestPossibleTime
             {
                 get
@@ -164,10 +172,12 @@ namespace LiveSplit.PaceAlert.Logic
                     if (_bestPossibleTime == null)
                     {
                         _bestPossibleTime =
-                            LiveSplitStateHelper.GetLastDelta(State, State.Run.IndexOf(Settings.SelectedSegment), "Best Segments",
+                            LiveSplitStateHelper.GetLastDelta(State, State.Run.IndexOf(Settings.SelectedSegment),
+                                "Best Segments",
                                 Settings.TimingMethod) +
                             State.Run.Last().Comparisons["Best Segments"][Settings.TimingMethod];
                     }
+
                     return _bestPossibleTime;
                 }
             }

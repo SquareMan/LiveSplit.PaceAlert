@@ -87,7 +87,7 @@ namespace LiveSplit.PaceAlert.UI
             var version = SettingsHelper.ParseVersion(settingsNode["Version"]);
             _settings.MessageDelay = SettingsHelper.ParseInt(settingsNode["Delay"], 2000);
             txtDelay.Text = _settings.MessageDelay.ToString();
-            
+
             _settings.SettingsDictionary.Clear();
 
             var runNodes = settingsNode.SelectNodes(".//Run");
@@ -113,10 +113,10 @@ namespace LiveSplit.PaceAlert.UI
                                 : SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero);
 
                         var splitIndex = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1);
-                        var selectedSegment = _state.Run.FilePath == filePath 
-                            ? _state.Run[splitIndex] 
+                        var selectedSegment = _state.Run.FilePath == filePath
+                            ? _state.Run[splitIndex]
                             : null;
-                        
+
                         var notificationSettings = new NotificationSettings
                         {
                             Type = SettingsHelper.ParseEnum(notificationNode["Type"], NotificationType.Delta),
@@ -142,7 +142,7 @@ namespace LiveSplit.PaceAlert.UI
             if (_state.Run.FilePath == null)
                 // No split file is opened.
                 return;
-            
+
             //Set form settings to settings associated with currently opened splits file.
             var settingsExist = _settings.SettingsDictionary.TryGetValue(_state.Run.FilePath, out _activeSettingsList);
             if (!settingsExist)
@@ -201,6 +201,7 @@ namespace LiveSplit.PaceAlert.UI
                 {
                     setting.SelectedSegment = _state.Run[setting.SelectedSplitIndex];
                 }
+
                 BuildSplitNames();
                 SetActiveSettings();
                 return;

@@ -6,7 +6,9 @@ namespace LiveSplit.PaceAlert.Logic
     public class NotificationSettings
     {
         public TimeSpan DeltaTarget;
+
         public string MessageTemplate;
+
         // Used for serialization only, required since settings for every file must be loaded to ensure they aren't lost
         public int SelectedSplitIndex;
         public TimingMethod TimingMethod;

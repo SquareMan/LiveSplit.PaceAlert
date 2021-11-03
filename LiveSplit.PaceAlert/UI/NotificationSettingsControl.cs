@@ -17,7 +17,7 @@ namespace LiveSplit.PaceAlert.UI
         {
             _timeFormatter = new ShortTimeFormatter();
         }
-        
+
         private readonly LiveSplitState _state;
 
         public NotificationSettingsControl(LiveSplitState state, IEnumerable splitNames, ListBox autocompleteBox)
@@ -57,7 +57,8 @@ namespace LiveSplit.PaceAlert.UI
 
         private void btnSendMessage_Click(object sender, EventArgs e)
         {
-            NotificationManager.SendMessageFormatted(new NotificationManager.NotificationStats(_state, BoundSettings), 0, CancellationToken.None);
+            NotificationManager.SendMessageFormatted(new NotificationManager.NotificationStats(_state, BoundSettings),
+                0, CancellationToken.None);
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
@@ -70,7 +71,7 @@ namespace LiveSplit.PaceAlert.UI
         private void txtTimeSpan_Validating(object sender, CancelEventArgs e)
         {
             TimeSpan parsedTimeSpan;
-            
+
             try
             {
                 parsedTimeSpan = TimeSpanParser.Parse(txtTimeSpan.Text);

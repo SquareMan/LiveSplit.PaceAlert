@@ -6,6 +6,7 @@ namespace LiveSplit.PaceAlert.Logic
     public class ComponentSettings
     {
         public int MessageDelay;
+
         // Dictionary of settings for each splits file, keyed on file path
         public Dictionary<string, List<NotificationSettings>> SettingsDictionary =
             new Dictionary<string, List<NotificationSettings>>();

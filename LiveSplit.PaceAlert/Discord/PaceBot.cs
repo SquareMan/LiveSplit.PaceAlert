@@ -40,8 +40,9 @@ namespace LiveSplit.PaceAlert.Discord
         {
             SendMessage(text, null, delay, cancellationToken);
         }
-        
-        public static async void SendMessage(string text, string filepath, int delay, CancellationToken cancellationToken)
+
+        public static async void SendMessage(string text, string filepath, int delay,
+            CancellationToken cancellationToken)
         {
             try
             {

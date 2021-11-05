@@ -107,11 +107,6 @@ namespace LiveSplit.PaceAlert.UI
 
                     foreach (XmlNode notificationNode in notificationNodes)
                     {
-                        var timeSpan =
-                            version <= new Version(0, 5, 0) && SettingsHelper.ParseBool(notificationNode["Ahead"], true)
-                                ? SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero).Negate()
-                                : SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero);
-
                         var splitIndex = SettingsHelper.ParseInt(notificationNode["SelectedSplit"], -1);
                         var selectedSegment = _state.Run.FilePath == filePath
                             ? _state.Run[splitIndex]
@@ -122,7 +117,7 @@ namespace LiveSplit.PaceAlert.UI
                             Condition = SettingsHelper.ParseString(notificationNode["Type"], string.Empty),
                             SelectedSplitIndex = splitIndex,
                             SelectedSegment = selectedSegment,
-                            DeltaTarget = timeSpan,
+                            DeltaTarget = SettingsHelper.ParseTimeSpan(notificationNode["DeltaTarget"], TimeSpan.Zero),
                             TimingMethod =
                                 SettingsHelper.ParseEnum(notificationNode["Comparison"], TimingMethod.RealTime),
                             MessageTemplate =

@@ -12,7 +12,7 @@ namespace LiveSplit.PaceAlert.Logic
         // Used for serialization only, required since settings for every file must be loaded to ensure they aren't lost
         public int SelectedSplitIndex;
         public TimingMethod TimingMethod;
-        public NotificationType Type;
+        public string Condition;
         public bool TakeScreenshot;
         public ISegment SelectedSegment;
 
@@ -22,7 +22,7 @@ namespace LiveSplit.PaceAlert.Logic
             MessageTemplate = string.Empty;
             SelectedSplitIndex = -1;
             TimingMethod = TimingMethod.RealTime;
-            Type = NotificationType.Delta;
+            Condition = string.Empty;
             TakeScreenshot = false;
         }
     }

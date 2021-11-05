@@ -18,7 +18,7 @@ namespace LiveSplit.PaceAlert.UI
             {
                 _listBox = value;
                 if (_listBox == null) return;
-                _listBox.DataSource = NotificationManager._variableFuncs.Keys.ToArray();
+                _listBox.DataSource = NotificationManager._variables.Keys.ToArray();
             }
         }
 
@@ -109,7 +109,7 @@ namespace LiveSplit.PaceAlert.UI
             var substring = Text.Substring(startIndex, SelectionStart - startIndex) + e.KeyChar;
 
             // Find which variables begin with the user's current input
-            ListBox.DataSource = NotificationManager._variableFuncs.Keys.Where(k => k.StartsWith(substring)).ToArray();
+            ListBox.DataSource = NotificationManager._variables.Keys.Where(k => k.StartsWith(substring)).ToArray();
             if (ListBox.Items.Count == 0) ListBox.Hide();
         }
     }

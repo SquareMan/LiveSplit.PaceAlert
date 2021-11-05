@@ -95,13 +95,19 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Api\Api.cs" />
+        <Compile Include="Api\ICondition.cs" />
+        <Compile Include="Api\ITrigger.cs" />
+        <Compile Include="Api\IVariable.cs" />
         <Compile Include="Discord\PaceBot.cs" />
         <Compile Include="Logic\NotificationManager.cs" />
         <Compile Include="Logic\NotificationSettings.cs" />
         <Compile Include="Logic\ComponentSettings.cs" />
-        <Compile Include="Logic\NotificationType.cs" />
+        <Compile Include="Logic\Conditions.cs" />
         <Compile Include="Logic\PaceAlertComponent.cs" />
         <Compile Include="Logic\PaceAlertFactory.cs" />
+        <Compile Include="Logic\Triggers.cs" />
+        <Compile Include="Logic\Variables.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="UI\MessageTextBox.cs">
           <SubType>UserControl</SubType>

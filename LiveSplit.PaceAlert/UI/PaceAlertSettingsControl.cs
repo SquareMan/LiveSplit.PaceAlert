@@ -67,7 +67,7 @@ namespace LiveSplit.PaceAlert.UI
                     var settingElement = document.CreateElement("Notification");
                     runElement.AppendChild(settingElement);
 
-                    SettingsHelper.CreateSetting(document, settingElement, "Type", setting.Type);
+                    SettingsHelper.CreateSetting(document, settingElement, "Type", setting.Condition);
                     SettingsHelper.CreateSetting(document, settingElement, "SelectedSplit",
                         _state.Run.FilePath == runSettingsKvp.Key
                             ? _state.Run.IndexOf(setting.SelectedSegment)
@@ -119,7 +119,7 @@ namespace LiveSplit.PaceAlert.UI
 
                         var notificationSettings = new NotificationSettings
                         {
-                            Type = SettingsHelper.ParseEnum(notificationNode["Type"], NotificationType.Delta),
+                            Condition = SettingsHelper.ParseString(notificationNode["Type"], string.Empty),
                             SelectedSplitIndex = splitIndex,
                             SelectedSegment = selectedSegment,
                             DeltaTarget = timeSpan,

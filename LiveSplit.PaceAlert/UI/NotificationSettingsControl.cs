@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using LiveSplit.Model;
@@ -26,7 +27,8 @@ namespace LiveSplit.PaceAlert.UI
 
             _state = state;
             cboSelectedSplit.DataSource = splitNames;
-            cboNotificationType.DataSource = Enum.GetValues(typeof(NotificationType));
+            cboNotificationType.DataSource =
+                NotificationManager._conditions.Select(kvp => kvp.Value.GetTitle()).ToArray();
 
             txtMessage.ListBox = autocompleteBox;
         }
@@ -37,7 +39,10 @@ namespace LiveSplit.PaceAlert.UI
         {
             BoundSettings = settings;
 
-            cboNotificationType.SelectedIndex = (int) settings.Type;
+            // TODO: UI warning if this condition is invalid. We don't want to use a fallback value because the
+            // condition might actually be from a plugin that just hasn't registered it yet.
+            NotificationManager._conditions.TryGetValue(settings.Condition, out var condition);
+            cboNotificationType.Text = condition?.GetTitle() ?? string.Empty;
             cboSelectedSplit.SelectedItem = settings.SelectedSegment.Name;
             txtMessage.Text = settings.MessageTemplate;
             chkTakeScreenshot.Checked = settings.TakeScreenshot;
@@ -102,7 +107,9 @@ namespace LiveSplit.PaceAlert.UI
 
         private void cboNotificationType_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            BoundSettings.Type = (NotificationType) cboNotificationType.SelectedIndex;
+            // TODO: Optimize data structure to avoid this searching
+            BoundSettings.Condition = NotificationManager._conditions
+                .First(kvp => kvp.Value.GetTitle() == cboNotificationType.Text).Key;
         }
 
         private void chkTakeScreenshot_CheckedChanged(object sender, EventArgs e)

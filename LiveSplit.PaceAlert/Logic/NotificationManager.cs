@@ -5,41 +5,63 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LiveSplit.Model;
+using LiveSplit.PaceAlert.Api;
 using LiveSplit.PaceAlert.Discord;
-using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.PaceAlert.Logic
 {
     public class NotificationManager : IDisposable
     {
-        private static readonly ITimeFormatter _deltaTimeFormatter;
-        private static readonly ITimeFormatter _timeFormatter;
         private static event EventHandler OnNextUpdate;
 
-        private static readonly Dictionary<NotificationType, Func<NotificationStats, bool>> _notificationPredicates =
-            new Dictionary<NotificationType, Func<NotificationStats, bool>>
-            {
-                {NotificationType.BestPossibleTime, stats => stats.BestPossibleTime < stats.TargetTime},
-                {NotificationType.Delta, stats => stats.DeltaValue < stats.TargetTime},
-                {
-                    NotificationType.Time,
-                    stats => stats.State.CurrentTime[stats.Settings.TimingMethod] < stats.TargetTime
-                }
-            };
+        internal static readonly Dictionary<string, ITrigger> _triggers = new Dictionary<string, ITrigger>();
+        internal static readonly Dictionary<string, ICondition> _conditions = new Dictionary<string, ICondition>();
+        internal static readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
 
-        internal static readonly Dictionary<string, Func<NotificationStats, string>> _variableFuncs =
-            new Dictionary<string, Func<NotificationStats, string>>
+        internal static bool AddTrigger(ITrigger trigger)
+        {
+            var tag = trigger.GetTag();
+            if (_triggers.ContainsKey(tag))
             {
-                {"$(delta)", stats => _deltaTimeFormatter.Format(stats.DeltaValue)},
-                {"$(bpt)", stats => _timeFormatter.Format(stats.BestPossibleTime)},
-                {"$(split)", stats => stats.Settings.SelectedSegment.Name},
-                {"$(time)", stats => _timeFormatter.Format(stats.State.CurrentTime[stats.Settings.TimingMethod])}
-            };
+                return false;
+            }
+            _triggers.Add(tag, trigger);
+            return true;
+        }
+        
+        internal static bool AddCondition(ICondition condition)
+        {
+            var tag = condition.GetTag();
+            if (_conditions.ContainsKey(tag))
+            {
+                return false;
+            }
+            _conditions.Add(tag, condition);
+            return true;
+        }
 
+        internal static bool AddVariable(IVariable variable)
+        {
+            var keyword = variable.GetKeyword();
+            if (_variables.ContainsKey(keyword))
+            {
+                return false;
+            }
+            
+            _variables.Add($"$({keyword})", variable);
+            return true;
+        }
+        
         static NotificationManager()
         {
-            _deltaTimeFormatter = new DeltaTimeFormatter();
-            _timeFormatter = new RegularTimeFormatter();
+            AddVariable(new Variables.Delta());
+            AddVariable(new Variables.Split());
+            AddVariable(new Variables.CurrentTime());
+            AddVariable(new Variables.BestPossibleTime());
+
+            AddCondition(new Conditions.Delta());
+            AddCondition(new Conditions.CurrentTime());
+            AddCondition(new Conditions.BestPossibleTime());
         }
 
         public static void SendMessageFormatted(NotificationStats stats, int delay, CancellationToken cancellationToken)
@@ -47,8 +69,8 @@ namespace LiveSplit.PaceAlert.Logic
             // Matches all occurrences of text surrounded with "$(" and ")" and replaces it if it's a valid variable
             var messageString = Regex.Replace(stats.Settings.MessageTemplate, @"\$\([^)]+\)", match =>
             {
-                _variableFuncs.TryGetValue(match.Value, out var func);
-                return func?.Invoke(stats) ?? match.Value;
+                _variables.TryGetValue(match.Value, out var variable);
+                return variable?.Evaluate(stats) ?? match.Value;
             });
 
             if (messageString != string.Empty)
@@ -121,9 +143,10 @@ namespace LiveSplit.PaceAlert.Logic
                 if (_state.CurrentSplitIndex != _state.Run.IndexOf(notificationSettings.SelectedSegment) + 1)
                     continue;
 
-                NotificationStats stats = new NotificationStats(_state, notificationSettings);
+                var stats = new NotificationStats(_state, notificationSettings);
 
-                if (_notificationPredicates[notificationSettings.Type].Invoke(stats))
+                _conditions.TryGetValue(notificationSettings.Condition, out var condition);
+                if (condition != null && condition.Evaluate(stats))
                 {
                     SendMessageFormatted(stats, _settings.MessageDelay, _cancellationTokenSource.Token);
                 }

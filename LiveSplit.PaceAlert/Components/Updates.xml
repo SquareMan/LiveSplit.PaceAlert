@@ -1,5 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <updates>
+    <update version="0.6.0">
+        <files>
+            <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change> First draft of API allowing for other components to add custom behavior. </change>
+            <change> UI overhaul: Autocomplete for variables. </change>
+            <change> New triggers for Start and Reset. </change>
+            <change> Notifications can now have 0 or more conditions. </change>
+        </changelog>
+    </update>
     <update version="0.5.0">
         <files>
             <file path="Components/LiveSplit.PaceAlert.dll" status="changed"/>
